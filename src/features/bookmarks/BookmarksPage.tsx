@@ -68,31 +68,29 @@ export const BookmarksPage: React.FC<BookmarksPageProps> = ({
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-fade-in pb-20 select-none">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pt-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 border border-coral-200 text-xs font-bold text-coral mb-2">
-            <Bookmark className="w-3.5 h-3.5 fill-coral" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FCE6A6] text-xs font-bold text-[#16161D] mb-2">
+            <Bookmark className="w-3.5 h-3.5 fill-[#16161D]" />
             <span>Targeted Revision Hub</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-navy dark:text-white flex items-center gap-3">
-            My Bookmarks
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-[#16161D] leading-[1.08] tracking-tight">
+            Learning Schedule<br />Bookmarks
           </h1>
-          <p className="text-sm font-semibold text-navy/60 dark:text-lightBlue-200 mt-1">
+          <p className="text-sm font-semibold text-[#6B6B7B] mt-1.5">
             Concepts you marked as "I Don't Remember" during study sessions.
           </p>
         </div>
 
         {bookmarkedCards.length > 0 && (
-          <Button
-            size="lg"
-            variant="coral"
+          <button
             onClick={onReviewAll}
-            className="shadow-coral-soft font-black text-sm px-6 py-3.5 shrink-0"
+            className="px-6 py-3.5 rounded-full bg-[#22222B] text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-soft hover:bg-black transition-all hover:scale-105 active:scale-95 shrink-0"
           >
-            <BookOpen className="w-4 h-4 mr-2" />
-            Review All ({bookmarkedCards.length})
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+            <BookOpen className="w-4 h-4" />
+            <span>Review All ({bookmarkedCards.length})</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
         )}
       </div>
 

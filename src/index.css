@@ -4,58 +4,64 @@
 
 @layer base {
   :root {
-    --background: 207 43% 97%; /* #F3F8FC */
-    --foreground: 228 42% 22%; /* #20294F */
+    --background: 260 25% 96%; /* #F3F1F8 */
+    --foreground: 240 14% 10%; /* #16161D */
     --card: 0 0% 100%;
-    --card-foreground: 228 42% 22%;
+    --card-foreground: 240 14% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 228 42% 22%;
-    --primary: 228 42% 22%; /* #20294F */
+    --popover-foreground: 240 14% 10%;
+    --primary: 240 14% 10%; /* #16161D */
     --primary-foreground: 0 0% 100%;
-    --secondary: 219 82% 83%; /* #AFC7F7 */
-    --secondary-foreground: 228 42% 22%;
-    --muted: 210 33% 96%;
-    --muted-foreground: 228 20% 50%;
-    --accent: 47 100% 69%; /* #FFDC61 */
-    --accent-foreground: 228 42% 22%;
-    --border: 215 35% 92%;
-    --ring: 219 82% 83%;
+    --secondary: 262 48% 87%; /* #D9CDEE */
+    --secondary-foreground: 240 14% 10%;
+    --muted: 240 8% 95%;
+    --muted-foreground: 240 7% 45%;
+    --accent: 43 93% 82%; /* #FCE6A6 */
+    --accent-foreground: 240 14% 10%;
+    --border: 260 20% 92%;
+    --ring: 262 48% 87%;
   }
 
   .dark {
-    --background: 228 42% 10%; /* deep navy dark bg */
-    --foreground: 210 40% 98%;
-    --card: 228 35% 15%;
-    --card-foreground: 210 40% 98%;
-    --popover: 228 35% 15%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 219 82% 83%;
-    --primary-foreground: 228 42% 22%;
-    --secondary: 228 30% 22%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 228 30% 20%;
-    --muted-foreground: 228 15% 65%;
-    --accent: 47 100% 69%;
-    --accent-foreground: 228 42% 22%;
-    --border: 228 30% 22%;
-    --ring: 219 82% 83%;
+    --background: 240 14% 10%;
+    --foreground: 260 20% 96%;
+    --card: 240 12% 14%;
+    --card-foreground: 260 20% 96%;
+    --popover: 240 12% 14%;
+    --popover-foreground: 260 20% 96%;
+    --primary: 262 48% 87%;
+    --primary-foreground: 240 14% 10%;
+    --secondary: 240 10% 20%;
+    --secondary-foreground: 260 20% 96%;
+    --muted: 240 10% 18%;
+    --muted-foreground: 240 10% 65%;
+    --accent: 43 93% 82%;
+    --accent-foreground: 240 14% 10%;
+    --border: 240 10% 22%;
+    --ring: 262 48% 87%;
   }
 }
 
 body {
   font-feature-settings: "rlig" 1, "calt" 1, "cv11" 1;
-  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
+  font-family: 'Plus Jakarta Sans', 'Poppins', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, #F3F1F8 0%, #E9E1F5 100%);
+  background-attachment: fixed;
+  color: #16161D;
   overflow-x: hidden;
+  min-height: 100vh;
 }
 
-/* Glassmorphism utility classes */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+/* Glassy pillowy card edges */
+.card-pillowy {
+  border-radius: 2rem; /* 32px */
+  box-shadow: 0 12px 40px rgba(120, 100, 170, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-pillowy:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 50px rgba(120, 100, 170, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .dark .glass-panel {

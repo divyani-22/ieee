@@ -7,8 +7,7 @@ import { generateCardsFromText } from './services/nlp';
 import { SAMPLE_NEUROSCIENCE_TEXT } from './samples/sampleDecks';
 import { useTheme } from './hooks/useTheme';
 import { Navbar } from './components/Navbar';
-import { HeroSection } from './features/landing/HeroSection';
-import { DashboardOverview } from './features/dashboard/DashboardOverview';
+import { PastelBentoDashboard } from './features/dashboard/PastelBentoDashboard';
 import { UploadZone } from './features/upload/UploadZone';
 import { DeckLibrary } from './features/library/DeckLibrary';
 import { DeckDetail } from './features/library/DeckDetail';
@@ -309,36 +308,23 @@ export const App: React.FC = () => {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {currentView === 'home' && (
           <div className="space-y-12">
-            {/* Landing Hero Section with Visual Floating Screens */}
-            <HeroSection
-              onStartLearning={() => {
-                if (decks.length > 0) {
-                  handleLaunchFlashcards();
-                } else {
-                  document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' });
-                }
+            {/* Signature Pastel Bento Dashboard Matching Reference Image */}
+            <PastelBentoDashboard
+              decks={decks}
+              allCards={allCards}
+              bookmarkedCount={bookmarkedCards.length}
+              dueCardsCount={totalDueCardsCount}
+              onOpenDeck={(deckId) => {
+                setActiveDeckId(deckId);
+                setCurrentView('deck-detail');
               }}
-              onExploreFeatures={() => {
-                document.getElementById('dashboard-overview')?.scrollIntoView({ behavior: 'smooth' });
+              onStartQuiz={() => handleLaunchQuizWithLevel('intermediate')}
+              onStartFlashcards={handleLaunchFlashcards}
+              onOpenBookmarks={() => setCurrentView('bookmarks')}
+              onOpenUpload={() => {
+                document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' });
               }}
             />
-
-            {/* Dashboard Overview Cards */}
-            <div id="dashboard-overview">
-              <DashboardOverview
-                studentName="Alex"
-                totalCards={allCards.length}
-                bookmarkedCount={bookmarkedCards.length}
-                dueCardsCount={totalDueCardsCount}
-                onOpenQuiz={() => handleLaunchQuizWithLevel('intermediate')}
-                onOpenFlashcards={handleLaunchFlashcards}
-                onOpenBookmarks={() => setCurrentView('bookmarks')}
-                onReviewAllBookmarks={handleReviewAllBookmarks}
-                onOpenUpload={() => {
-                  document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              />
-            </div>
 
             {/* Ingestion & Upload Zone */}
             <div id="upload-section">

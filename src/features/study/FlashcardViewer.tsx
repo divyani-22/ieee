@@ -366,56 +366,56 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
             >
               {/* PRIMARY DECISION BUTTONS: "I Don't Remember" vs "I Remember" */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* I Don't Remember (Coral) */}
+                {/* I Don't Remember (Butter Yellow #FCE6A6) */}
                 <button
                   type="button"
                   onClick={handleDontRemember}
-                  className="p-5 rounded-3xl bg-coral text-white hover:bg-coral-500 shadow-coral-soft transition-all duration-200 text-left group flex flex-col justify-between space-y-2 active:scale-[0.98]"
+                  className="p-5 rounded-4xl bg-[#FCE6A6] text-[#16161D] hover:bg-[#E5CB82] shadow-pillowy transition-all duration-200 text-left group flex flex-col justify-between space-y-2 active:scale-[0.98]"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-base font-black flex items-center gap-2">
-                      <X className="w-5 h-5 text-white stroke-[3]" />
+                    <span className="text-base font-extrabold flex items-center gap-2">
+                      <X className="w-5 h-5 text-[#16161D] stroke-[2.5]" />
                       I Don't Remember
                     </span>
-                    <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-white/20 text-white">
+                    <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-white/70 text-[#16161D]">
                       Auto-Bookmark
                     </span>
                   </div>
-                  <p className="text-xs text-white/90 font-medium leading-relaxed">
+                  <p className="text-xs text-[#6B6B7B] font-semibold leading-relaxed">
                     Saves this concept to Bookmarks & resets review schedule for practice.
                   </p>
                 </button>
 
-                {/* I Remember (Light Blue / Navy) */}
+                {/* I Remember (Mint #D6EAE1) */}
                 <button
                   type="button"
                   onClick={handleRemembered}
-                  className="p-5 rounded-3xl bg-lightBlue-100 hover:bg-lightBlue-200 dark:bg-navy-800 text-navy dark:text-white border border-lightBlue-200 dark:border-navy-700 shadow-soft transition-all duration-200 text-left group flex flex-col justify-between space-y-2 active:scale-[0.98]"
+                  className="p-5 rounded-4xl bg-[#D6EAE1] hover:bg-[#A8D5C2] text-[#16161D] shadow-pillowy transition-all duration-200 text-left group flex flex-col justify-between space-y-2 active:scale-[0.98]"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-base font-black flex items-center gap-2">
-                      <Check className="w-5 h-5 text-coral stroke-[3]" />
+                    <span className="text-base font-extrabold flex items-center gap-2">
+                      <Check className="w-5 h-5 text-[#589A80] stroke-[2.5]" />
                       I Remember
                     </span>
-                    <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-white dark:bg-navy-700 text-navy dark:text-white shadow-sm">
+                    <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-white text-[#16161D] shadow-xs">
                       Next: {goodInt}
                     </span>
                   </div>
-                  <p className="text-xs text-navy/70 dark:text-lightBlue-200 font-medium leading-relaxed">
+                  <p className="text-xs text-[#6B6B7B] font-semibold leading-relaxed">
                     Advances to the next card and reinforces long-term retention.
                   </p>
                 </button>
               </div>
 
               {/* Granular SM-2 Rating Controls */}
-              <div className="pt-2 border-t border-lightBlue-100 dark:border-navy-800">
-                <div className="text-[11px] font-bold text-navy/50 dark:text-lightBlue-300 mb-2 text-center">
+              <div className="pt-2 border-t border-black/5">
+                <div className="text-[11px] font-bold text-[#6B6B7B] mb-2 text-center">
                   Or select exact recall interval:
                 </div>
                 <div className="grid grid-cols-4 gap-2">
                   <button
                     onClick={() => handleRating(1)}
-                    className="p-2.5 rounded-2xl bg-coral-50 hover:bg-coral-100 dark:bg-navy-800 text-coral-600 dark:text-coral-300 border border-coral-200 dark:border-navy-700 transition-all flex flex-col items-center justify-center text-xs font-black"
+                    className="p-2.5 rounded-full bg-white hover:bg-slate-50 text-[#16161D] shadow-xs transition-all flex flex-col items-center justify-center text-xs font-bold"
                   >
                     <span>Again (1)</span>
                     <span className="text-[10px] opacity-75 font-mono">{againInt}</span>
@@ -423,7 +423,7 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
 
                   <button
                     onClick={() => handleRating(2)}
-                    className="p-2.5 rounded-2xl bg-yellowPastel-50 hover:bg-yellowPastel-100 dark:bg-navy-800 text-navy dark:text-yellowPastel-300 border border-yellowPastel-200 dark:border-navy-700 transition-all flex flex-col items-center justify-center text-xs font-black"
+                    className="p-2.5 rounded-full bg-[#FCE6A6] text-[#16161D] shadow-xs transition-all flex flex-col items-center justify-center text-xs font-bold"
                   >
                     <span>Hard (2)</span>
                     <span className="text-[10px] opacity-75 font-mono">{hardInt}</span>
@@ -431,7 +431,7 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
 
                   <button
                     onClick={() => handleRating(3)}
-                    className="p-2.5 rounded-2xl bg-lightBlue-50 hover:bg-lightBlue-100 dark:bg-navy-800 text-navy dark:text-lightBlue-200 border border-lightBlue-200 dark:border-navy-700 transition-all flex flex-col items-center justify-center text-xs font-black"
+                    className="p-2.5 rounded-full bg-[#D6EAE1] text-[#16161D] shadow-xs transition-all flex flex-col items-center justify-center text-xs font-bold"
                   >
                     <span>Good (3)</span>
                     <span className="text-[10px] opacity-75 font-mono">{goodInt}</span>
@@ -439,7 +439,7 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
 
                   <button
                     onClick={() => handleRating(4)}
-                    className="p-2.5 rounded-2xl bg-navy-50 hover:bg-navy-100 dark:bg-navy-800 text-navy dark:text-white border border-navy-200 dark:border-navy-700 transition-all flex flex-col items-center justify-center text-xs font-black"
+                    className="p-2.5 rounded-full bg-[#D9CDEE] text-[#16161D] shadow-xs transition-all flex flex-col items-center justify-center text-xs font-bold"
                   >
                     <span>Easy (4)</span>
                     <span className="text-[10px] opacity-75 font-mono">{easyInt}</span>

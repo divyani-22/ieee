@@ -216,37 +216,37 @@ export const QuizSession: React.FC<QuizSessionProps> = ({
 
         {/* Exactly THREE Quiz Difficulty Level Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
-          {/* 1. SIMPLE (Light Blue #AFC7F7) */}
+          {/* 1. SIMPLE (Mint #D6EAE1) */}
           <div
             onClick={() => setSelectedDifficulty('simple')}
-            className={`p-7 rounded-4xl border-2 transition-all duration-300 flex flex-col justify-between space-y-6 cursor-pointer bg-lightBlue-50/80 dark:bg-navy-800/80 hover:-translate-y-1.5 ${
+            className={`card-pillowy p-7 border-2 transition-all duration-300 flex flex-col justify-between space-y-6 cursor-pointer bg-[#D6EAE1] hover:-translate-y-1.5 ${
               selectedDifficulty === 'simple'
-                ? 'border-lightBlue-400 ring-4 ring-lightBlue-200 shadow-soft-lg'
-                : 'border-lightBlue-200/80 hover:border-lightBlue-300 shadow-soft'
+                ? 'border-[#589A80] ring-4 ring-[#A8D5C2]/40 shadow-pillowy-hover'
+                : 'border-transparent shadow-pillowy'
             }`}
           >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-2xl bg-lightBlue-200 dark:bg-navy-700 flex items-center justify-center">
-                  <Zap className="w-6 h-6 text-navy dark:text-lightBlue-100" />
+                <div className="w-12 h-12 rounded-full bg-white shadow-soft flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-[#589A80]" />
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-white dark:bg-navy-700 text-navy dark:text-white shadow-soft">
+                <span className="text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-white text-[#16161D] shadow-xs">
                   Beginner
                 </span>
               </div>
 
               <div className="space-y-1.5">
-                <h3 className="text-2xl font-black text-navy dark:text-white">
+                <h3 className="text-2xl font-black text-[#16161D]">
                   SIMPLE
                 </h3>
-                <p className="text-xs font-semibold text-navy/70 dark:text-lightBlue-200 leading-relaxed">
-                  Basic concepts and quick practice. Focuses on foundational definitions and direct clozes.
+                <p className="text-xs font-semibold text-[#6B6B7B] leading-relaxed">
+                  Basic concepts and quick revision. Foundational definitions and direct recall questions.
                 </p>
               </div>
             </div>
 
-            <div className="space-y-4 pt-4 border-t border-lightBlue-200/60 dark:border-navy-700">
-              <div className="flex items-center justify-between text-xs font-bold text-navy/60 dark:text-lightBlue-200">
+            <div className="space-y-4 pt-4 border-t border-black/5">
+              <div className="flex items-center justify-between text-xs font-bold text-[#6B6B7B]">
                 <span className="flex items-center gap-1.5">
                   <BookOpen className="w-3.5 h-3.5" />
                   10 Questions
@@ -257,48 +257,46 @@ export const QuizSession: React.FC<QuizSessionProps> = ({
                 </span>
               </div>
 
-              <Button
-                size="md"
-                variant={selectedDifficulty === 'simple' ? 'primary' : 'secondary'}
+              <button
                 onClick={() => startQuizWithDifficulty('simple')}
-                className="w-full font-bold shadow-soft"
+                className="w-full py-3 rounded-full bg-[#22222B] text-white font-extrabold text-xs shadow-soft hover:bg-black transition-all"
               >
-                Start Quiz
-              </Button>
+                Start Simple Quiz
+              </button>
             </div>
           </div>
 
-          {/* 2. INTERMEDIATE (Yellow #FFDC61) */}
+          {/* 2. INTERMEDIATE (Butter Yellow #FCE6A6) */}
           <div
             onClick={() => setSelectedDifficulty('intermediate')}
-            className={`p-7 rounded-4xl border-2 transition-all duration-300 flex flex-col justify-between space-y-6 cursor-pointer bg-yellowPastel-50/80 dark:bg-navy-800/80 hover:-translate-y-1.5 ${
+            className={`card-pillowy p-7 border-2 transition-all duration-300 flex flex-col justify-between space-y-6 cursor-pointer bg-[#FCE6A6] hover:-translate-y-1.5 ${
               selectedDifficulty === 'intermediate'
-                ? 'border-yellowPastel-400 ring-4 ring-yellowPastel-200 shadow-soft-lg'
-                : 'border-yellowPastel-200/80 hover:border-yellowPastel-300 shadow-soft'
+                ? 'border-[#B89431] ring-4 ring-[#E5CB82]/40 shadow-pillowy-hover'
+                : 'border-transparent shadow-pillowy'
             }`}
           >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-2xl bg-yellowPastel-200 dark:bg-navy-700 flex items-center justify-center">
-                  <Target className="w-6 h-6 text-navy dark:text-yellowPastel-300" />
+                <div className="w-12 h-12 rounded-full bg-white shadow-soft flex items-center justify-center">
+                  <Target className="w-5 h-5 text-[#B89431]" />
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-white dark:bg-navy-700 text-navy dark:text-white shadow-soft">
+                <span className="text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-white text-[#16161D] shadow-xs">
                   Moderate
                 </span>
               </div>
 
               <div className="space-y-1.5">
-                <h3 className="text-2xl font-black text-navy dark:text-white">
+                <h3 className="text-2xl font-black text-[#16161D]">
                   INTERMEDIATE
                 </h3>
-                <p className="text-xs font-semibold text-navy/70 dark:text-lightBlue-200 leading-relaxed">
-                  Questions requiring stronger understanding. Balanced multiple-choice and conceptual application.
+                <p className="text-xs font-semibold text-[#6B6B7B] leading-relaxed">
+                  Questions requiring deeper topic understanding and multi-step conceptual connections.
                 </p>
               </div>
             </div>
 
-            <div className="space-y-4 pt-4 border-t border-yellowPastel-200/60 dark:border-navy-700">
-              <div className="flex items-center justify-between text-xs font-bold text-navy/60 dark:text-lightBlue-200">
+            <div className="space-y-4 pt-4 border-t border-black/5">
+              <div className="flex items-center justify-between text-xs font-bold text-[#6B6B7B]">
                 <span className="flex items-center gap-1.5">
                   <BookOpen className="w-3.5 h-3.5" />
                   10 Questions
@@ -309,48 +307,46 @@ export const QuizSession: React.FC<QuizSessionProps> = ({
                 </span>
               </div>
 
-              <Button
-                size="md"
-                variant={selectedDifficulty === 'intermediate' ? 'yellow' : 'secondary'}
+              <button
                 onClick={() => startQuizWithDifficulty('intermediate')}
-                className="w-full font-bold shadow-soft"
+                className="w-full py-3 rounded-full bg-[#22222B] text-white font-extrabold text-xs shadow-soft hover:bg-black transition-all"
               >
-                Start Quiz
-              </Button>
+                Start Intermediate Quiz
+              </button>
             </div>
           </div>
 
-          {/* 3. HARD (Coral #F58D87) */}
+          {/* 3. HARD (Lavender #D9CDEE) */}
           <div
             onClick={() => setSelectedDifficulty('hard')}
-            className={`p-7 rounded-4xl border-2 transition-all duration-300 flex flex-col justify-between space-y-6 cursor-pointer bg-coral-50/80 dark:bg-navy-800/80 hover:-translate-y-1.5 ${
+            className={`card-pillowy p-7 border-2 transition-all duration-300 flex flex-col justify-between space-y-6 cursor-pointer bg-[#D9CDEE] hover:-translate-y-1.5 ${
               selectedDifficulty === 'hard'
-                ? 'border-coral ring-4 ring-coral-200 shadow-coral-soft'
-                : 'border-coral-200/80 hover:border-coral-300 shadow-soft'
+                ? 'border-[#7D64B5] ring-4 ring-[#B9A6E3]/40 shadow-pillowy-hover'
+                : 'border-transparent shadow-pillowy'
             }`}
           >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-2xl bg-coral-200 dark:bg-navy-700 flex items-center justify-center">
-                  <BrainCircuit className="w-6 h-6 text-coral-600 dark:text-coral-300" />
+                <div className="w-12 h-12 rounded-full bg-white shadow-soft flex items-center justify-center">
+                  <BrainCircuit className="w-5 h-5 text-[#7D64B5]" />
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-white dark:bg-navy-700 text-coral-600 dark:text-coral-300 shadow-soft">
+                <span className="text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-white text-[#16161D] shadow-xs">
                   Challenging
                 </span>
               </div>
 
               <div className="space-y-1.5">
-                <h3 className="text-2xl font-black text-navy dark:text-white">
+                <h3 className="text-2xl font-black text-[#16161D]">
                   HARD
                 </h3>
-                <p className="text-xs font-semibold text-navy/70 dark:text-lightBlue-200 leading-relaxed">
-                  Challenging questions requiring deeper understanding. Subtle altered premises & nuanced distractors.
+                <p className="text-xs font-semibold text-[#6B6B7B] leading-relaxed">
+                  Challenging synthesis questions designed to thoroughly test mastery under exam-like conditions.
                 </p>
               </div>
             </div>
 
-            <div className="space-y-4 pt-4 border-t border-coral-200/60 dark:border-navy-700">
-              <div className="flex items-center justify-between text-xs font-bold text-navy/60 dark:text-lightBlue-200">
+            <div className="space-y-4 pt-4 border-t border-black/5">
+              <div className="flex items-center justify-between text-xs font-bold text-[#6B6B7B]">
                 <span className="flex items-center gap-1.5">
                   <BookOpen className="w-3.5 h-3.5" />
                   10 Questions
@@ -361,14 +357,12 @@ export const QuizSession: React.FC<QuizSessionProps> = ({
                 </span>
               </div>
 
-              <Button
-                size="md"
-                variant={selectedDifficulty === 'hard' ? 'coral' : 'secondary'}
+              <button
                 onClick={() => startQuizWithDifficulty('hard')}
-                className="w-full font-bold shadow-soft"
+                className="w-full py-3 rounded-full bg-[#22222B] text-white font-extrabold text-xs shadow-soft hover:bg-black transition-all"
               >
-                Start Quiz
-              </Button>
+                Start Hard Quiz
+              </button>
             </div>
           </div>
         </div>
