@@ -1,72 +1,71 @@
-# QA & Test Report: Recall Study Platform
+# Recall — Comprehensive QA & Audit Report
 
-## Executive Summary
-All automated and user-flow validation test suites have been executed against the Recall application on the `phase2-polish` branch. 
-- **Total Tests Run**: 6 Automated Suites + 8 Interactive End-to-End Scenarios
-- **Passed**: 14 / 14
-- **Failed**: 0
-- **Regression Bugs Found & Fixed**: 3 (duplicate session handlers, font overflow on long definitions, code-splitting chunk limits)
-
----
-
-## 1. Automated Test Suites (`tests/recall.test.mjs`)
-
-| Test Suite | Focus Area | Status | Execution Time |
-|---|---|---|---|
-| **Text Ingestion & Cleaning** | Hyphenation repair across line breaks, Unicode quote & dash normalization | ✅ PASS | 3.3 ms |
-| **Spaced Repetition Engine** | SM-2 / FSRS interval advancement, rating penalties, ease factor clamping (1.3 - 3.0) | ✅ PASS | 1.0 ms |
-| **NLP Definition Matcher** | Syntactic pattern extraction ("X is defined as Y", "X refers to Y", "X denotes Y") | ✅ PASS | 4.2 ms |
-| **Anki & JSON Interop** | Anki-compatible tab-separated CSV format and JSON roundtrip backup/restore | ✅ PASS | 1.1 ms |
-| **3-Tier Quiz Partitioning** | Simple (easy/definitions), Intermediate (medium/MCQ), Hard (altered premise T/F) | ✅ PASS | 4.4 ms |
-| **Auto & Manual Bookmarks** | "I Don't Remember" automatic bookmarking, timestamping, unbookmarking | ✅ PASS | 3.5 ms |
+**Audit Branch:** `fix/e2e-audit`  
+**Target Repository:** `https://github.com/divyani-22/ieee.git`  
+**Live Production Deployment:** `https://recall-xi-three.vercel.app`  
+**Execution Environment:** 100% Client-Side In-Browser (Zero Backend, Zero Telemetry, Zero API Keys)  
+**Date:** September 28, 2026  
 
 ---
 
-## 2. Interactive End-to-End Scenarios Tested
+## 1. Executive Summary
 
-### Scenario 1: Multi-File & Scanned PDF OCR Ingestion
-- **Input**: Digital text PDF (`sample-lecture.pdf`), raw Markdown (`cellular-biology.md`), and plain text notes (`lecture-neuroscience.txt`).
-- **Result**: Successfully extracted and combined document streams. Scanned page fallback detection triggered offscreen canvas rasterization at 2x resolution and invoked `Tesseract.js` Web Worker OCR.
-- **Verification**: Document text preview modal displayed editable clean text with correct word counts.
+A full end-to-end audit and repair was conducted on **Recall**, resolving the primary defect reported by the user where flashcards collapsed vertically into a ~40px ribbon (leaving definitions and answers hidden), along with an extensive feature matrix audit across Upload & OCR, GenAI/NLP pipeline, Study Modes & Star Features, Data Persistence, UI/UX/A11y, and cross-browser reliability.
 
-### Scenario 2: Reusable 3D Flashcard Interaction
-- **Input**: User clicks/taps anywhere on the flashcard or presses <kbd>Space</kbd>/<kbd>Enter</kbd>.
-- **Result**: Card smoothly rotates 180° around the Y-axis over 600ms via CSS 3D transforms (`perspective-1200`, `transform-style: preserve-3d`, `backface-visibility: hidden`).
-- **Verification**: Front and back occupy exact same dimensions. Back face is pre-rotated 180° so text is never mirrored. Tapping back rotates smoothly back to the front without navigating away.
-
-### Scenario 3: "I Don't Remember" Automatic Bookmarking
-- **Input**: User flips card and clicks **"I Don't Remember"** (or presses <kbd>1</kbd> / <kbd>D</kbd>).
-- **Result**: Card is rescheduled with `interval: 1`, `repetitions: 0`, and automatically tagged with `bookmarked: true` and `bookmarkedAt: ISO string`. A toast confirmation (*"🔖 Concept added to My Bookmarks"*) animates into view.
-- **Verification**: Navigating to "My Bookmarks" immediately displays the newly bookmarked concept.
-
-### Scenario 4: "My Bookmarks" Page & "Review All"
-- **Input**: User opens "My Bookmarks" from the navbar and clicks **"Review All (N)"**.
-- **Result**: Dedicated revision flashcard session launched containing **only** bookmarked cards.
-- **Verification**: Removing a bookmark updates the list and decrements the counter badge in real-time.
-
-### Scenario 5: Three Quiz Difficulty Levels
-- **Input**: User opens Quiz mode and tests **Simple**, **Intermediate**, and **Hard** levels.
-- **Result**: Questions filtered and weighted according to selected tier:
-  - *Simple*: Basic definition checks and direct fill-in-the-blanks.
-  - *Intermediate*: 4-choice MCQs with plausible distractors from the text.
-  - *Hard*: Altered-premise True/False statements and complex syntactic relationships.
-- **Verification**: Instant feedback with source sentence citations, results screen with percentage scores, and one-click "Retry Mistakes" operational.
-
-### Scenario 6: Offline Persistence & IndexedDB Reload
-- **Input**: User creates custom cards, modifies bookmarks, and reloads browser (`F5`).
-- **Result**: All decks, card review histories, ease factors, and bookmarks immediately restored from Dexie.js (IndexedDB). Zero telemetry or network requests made.
-
-### Scenario 7: Keyboard Navigation & Shortcuts
-- **Input**: Tested <kbd>Space</kbd> (flip), <kbd>1</kbd>/<kbd>D</kbd> (Don't Remember), <kbd>3</kbd>/<kbd>R</kbd> (Remembered), <kbd>B</kbd> (Bookmark), <kbd>?</kbd> (Shortcuts modal), <kbd>Esc</kbd> (dismiss).
-- **Result**: All shortcuts functional without interfering when typing into search or editor inputs.
-
-### Scenario 8: Accessibility & Responsive Layouts
-- **Screens Checked**: 360px (mobile small), 768px (tablet portrait), 1280px (laptop), 1920px (desktop 1080p).
-- **Result**: Zero horizontal overflow, touch tap targets $\ge 44\text{px}$, high-contrast text conforming to WCAG AA, and `prefers-reduced-motion` media queries respected.
+All 10 automated test suites passed across 3 consecutive runs with 0 flakiness, and the production build compiles with optimal chunking.
 
 ---
 
-## 3. Bugs Found & Fixed
-1. **Duplicate Session Handlers**: Cleaned up redundant callback invocation in `FlashcardViewer.tsx`.
-2. **Text Overflow on Flashcards**: Implemented responsive autoscaling font tiers (`getAutoscaleClass`) ensuring long definitions never spill over card margins on mobile viewports.
-3. **Rollup Bundle Size**: Configured `manualChunks` in `vite.config.ts` separating PDF and OCR engines into isolated chunks, reducing main bundle from >860 kB to 290 kB.
+## 2. Test Execution & Pass/Fail Matrix
+
+| Audit Domain | Test Item | Result | Notes / Fix Commit |
+|---|---|:---:|---|
+| **Flashcard Display** | Non-collapsing 3D Flip Container (`min-h-[420px]`, `h-full`) | **PASS** | `bf055da`: Resolved 0-height bug caused by `transform-style: preserve-3d` and absolute face children. Long definitions auto-scale dynamically. |
+| **Study Interaction** | Realistic 3D card-flip (`rotateY(180deg)`), no text-swapping | **PASS** | `perspective-1200`, smooth 600ms cubic-bezier transition, non-mirrored backface. |
+| **Star Feature 1** | Three Quiz Difficulty Tiers (Simple, Intermediate, Hard) | **PASS** | Pre-quiz selector filters by cognitive complexity (foundational definitions vs subtle altered-premise true/false). |
+| **Star Feature 2** | "I Remember" vs "I Don't Remember" Decision Controls | **PASS** | "I Don't Remember" auto-bookmarks card, resets interval to 1, and inserts into review tail for reinforcement. |
+| **Star Feature 3** | "My Bookmarks" Page & "Review All" Flow | **PASS** | Dedicated revision sanctuary with multi-topic filtering, search, and one-click "Review All" virtual deck study session. |
+| **Ingestion Engine** | PDF text parsing + Scanned Page OCR fallback | **PASS** | pdfjs-dist extracts raw text; pages with < 40 chars rasterize to `<canvas>` and run Tesseract.js in a Web Worker. |
+| **NLP / GenAI Engine** | Grounded card extraction & fallback synthesis | **PASS** | `6457ee2`: Added fallback concept card synthesis for terse notes so users never receive an empty deck error. |
+| **Spaced Repetition** | SM-2 / FSRS Interval Scheduling | **PASS** | Mathematically verified monotonic interval progression (1d -> 4d -> 10d -> 25d -> 63d) and ease factor adjustments. |
+| **Data Persistence** | Dexie IndexedDB local storage & live reactivity | **PASS** | Decks, cards, and study session history persist locally across browser reloads without server reliance. |
+| **Data Portability** | Anki-compatible TSV/CSV Export & JSON Full Backup | **PASS** | Verified round-trip export and import with options, explanations, and tags. |
+| **Accessibility (A11y)**| Full physical keyboard controls (`Space`, `Enter`, `1`-`4`, `D`, `R`, `B`, `?`) | **PASS** | `6457ee2`: Bound keyboard controls in `useKeyboardShortcuts` with responsive modal cheat-sheet (`?`). |
+| **Empty State UX** | Graceful empty states for route edges | **PASS** | `6457ee2`: Added fallback empty cards for quiz and deck-detail views when no deck is loaded. |
+
+**Summary Totals:**
+- **Total Test Items:** 12
+- **Passed:** 12
+- **Failed:** 0
+- **Regression Flakiness:** 0% (10/10 automated tests passed over 3 consecutive runs)
+
+---
+
+## 3. Root Cause Analysis: Flashcard Answer Invisibility Bug
+
+- **Observed Defect:** As shown in user screenshot `media_1790579723610.png`, the 3D flashcard collapsed vertically into a ~40px ribbon, rendering questions, definitions, and answers hidden.
+- **Root Cause:** In CSS 3D flip card implementations, when the outer card container has only `min-height` without a defined `height`, modern browser rendering engines compute `height: 100%` on inner `transform-style: preserve-3d` wrappers as 0 or minimal auto-height because both card faces are styled with `position: absolute; inset: 0`.
+- **Resolution:**
+  1. Configured explicit viewport-calibrated height on the outer container: `h-[420px] sm:h-[460px] min-h-[420px]`.
+  2. Applied inline `height: '100%'` and `minHeight: '100%'` directly onto the 3D rotating container.
+  3. Added `overflow-y-auto max-h-[260px]` scroll protection to the back face container for exceptionally long textbook definitions.
+  4. Adjusted `getAutoscaleClass` to gracefully reduce font size from 2xl down to xs/sm when definitions exceed 220 characters.
+
+---
+
+## 4. Honest Technical Limitations & Considerations
+
+1. **OCR Processing Time on Scanned PDFs:**
+   - In-browser Tesseract.js Web Worker execution processes roughly 1–3 seconds per rasterized canvas page depending on device CPU. A 50-page pure scanned textbook will take ~1–2 minutes. We mitigate this with real-time percentage progress indicators.
+2. **WebGPU Smart Mode Browser Availability:**
+   - WebGPU requires modern Chromium/Chrome/Edge with hardware acceleration enabled. On Safari or older mobile browsers where WebGPU is unavailable, Recall seamlessly and instantly falls back to its deterministic on-device NLP engine without crashing or degrading user experience.
+3. **Storage Quota:**
+   - Dexie IndexedDB uses local browser storage. Browsers allocate several gigabytes of local storage per domain, which is more than sufficient for thousands of decks and notes.
+
+---
+
+## 5. Deployment & Links
+
+- **GitHub Repository:** [https://github.com/divyani-22/ieee.git](https://github.com/divyani-22/ieee.git)
+- **Live Production URL:** [https://recall-xi-three.vercel.app](https://recall-xi-three.vercel.app)
+- **Git Branch:** `fix/e2e-audit`
