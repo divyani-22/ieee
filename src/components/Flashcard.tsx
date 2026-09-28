@@ -16,11 +16,12 @@ export interface FlashcardProps {
  * never overflow and stay legible on small mobile screens.
  */
 function getAutoscaleClass(text: string): string {
+  if (!text) return 'text-lg font-bold';
   const len = text.length;
-  if (len < 55) return 'text-xl sm:text-3xl font-extrabold';
-  if (len < 120) return 'text-lg sm:text-2xl font-bold';
-  if (len < 200) return 'text-base sm:text-xl font-bold';
-  return 'text-sm sm:text-lg font-semibold';
+  if (len < 60) return 'text-xl sm:text-2xl font-extrabold';
+  if (len < 140) return 'text-base sm:text-xl font-bold';
+  if (len < 220) return 'text-sm sm:text-lg font-semibold';
+  return 'text-xs sm:text-sm font-medium';
 }
 
 /**
@@ -74,7 +75,7 @@ export const Flashcard: React.FC<FlashcardProps> = ({
 
   return (
     <div
-      className={`w-full max-w-2xl mx-auto perspective-1200 cursor-pointer select-none min-h-[380px] sm:min-h-[440px] focus:outline-none ${className}`}
+      className={`w-full max-w-2xl mx-auto perspective-1200 cursor-pointer select-none h-[420px] sm:h-[460px] min-h-[420px] focus:outline-none ${className}`}
       onClick={onFlip}
       onKeyDown={handleKeyDown}
       tabIndex={0}
@@ -89,12 +90,15 @@ export const Flashcard: React.FC<FlashcardProps> = ({
       <div
         className="w-full h-full relative rounded-3xl transform-style-preserve-3d"
         style={{
+          height: '100%',
+          minHeight: '100%',
           transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
           transition: reduceMotion
             ? 'transform 0.1s ease'
             : 'transform 600ms cubic-bezier(0.4, 0.0, 0.2, 1)',
         }}
       >
+
         {/* ========================================================================= */}
         {/* FRONT OF FLASHCARD */}
         {/* ========================================================================= */}
