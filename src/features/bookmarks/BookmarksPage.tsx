@@ -1,23 +1,18 @@
 import React, { useState } from 'react';
 import {
   Bookmark,
-  BookmarkCheck,
-  Trash2,
   BookOpen,
   Calendar,
   Sparkles,
   ArrowRight,
   Search,
-  Filter,
-  Layers,
-  HelpCircle,
-  Star
+  Trash2,
+  RotateCw,
+  Layers
 } from 'lucide-react';
 import { Card, Deck } from '../../types';
-import { GlassCard } from '../../components/GlassCard';
 import { Button } from '../../components/Button';
-import { CardTypeBadge, DifficultyBadge } from '../../components/Badge';
-import { EmptyState } from '../../components/EmptyState';
+import { CardTypeBadge } from '../../components/Badge';
 
 export interface BookmarksPageProps {
   bookmarkedCards: Card[];
@@ -36,6 +31,7 @@ export const BookmarksPage: React.FC<BookmarksPageProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDeckFilter, setSelectedDeckFilter] = useState<number | 'all'>('all');
+  const [revealedCardId, setRevealedCardId] = useState<number | null>(null);
 
   const deckMap = React.useMemo(() => {
     const map = new Map<number, Deck>();
@@ -70,29 +66,28 @@ export const BookmarksPage: React.FC<BookmarksPageProps> = ({
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 animate-fade-in pb-20">
-      {/* Header with Star Badge */}
+    <div className="max-w-4xl mx-auto space-y-8 animate-fade-in pb-20 select-none">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/50 border border-amber-300/60 dark:border-amber-700/60 text-xs font-bold text-amber-700 dark:text-amber-300 mb-2">
-            <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-            <span>Star Feature • Concepts to Master</span>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 border border-coral-200 text-xs font-bold text-coral mb-2">
+            <Bookmark className="w-3.5 h-3.5 fill-coral" />
+            <span>Targeted Revision Hub</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white flex items-center gap-3">
-            <Bookmark className="w-7 h-7 text-amber-500 fill-amber-500" />
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-navy dark:text-white flex items-center gap-3">
             My Bookmarks
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            All the concepts you marked as "I Don't Remember" during study sessions. Revise them until consolidated!
+          <p className="text-sm font-semibold text-navy/60 dark:text-lightBlue-200 mt-1">
+            Concepts you marked as "I Don't Remember" during study sessions.
           </p>
         </div>
 
         {bookmarkedCards.length > 0 && (
           <Button
             size="lg"
-            variant="primary"
+            variant="coral"
             onClick={onReviewAll}
-            className="shadow-lg shadow-indigo-500/25 shrink-0 bg-gradient-to-r from-amber-500 via-indigo-600 to-violet-600 hover:from-amber-600 hover:to-violet-700 border-amber-400/40 text-white font-bold"
+            className="shadow-coral-soft font-black text-sm px-6 py-3.5 shrink-0"
           >
             <BookOpen className="w-4 h-4 mr-2" />
             Review All ({bookmarkedCards.length})
@@ -105,13 +100,13 @@ export const BookmarksPage: React.FC<BookmarksPageProps> = ({
       {bookmarkedCards.length > 0 && (
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+            <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-navy/40 dark:text-lightBlue-200" />
             <input
               type="text"
-              placeholder="Search through bookmarked questions, answers, or notes..."
+              placeholder="Search through bookmarked questions or answers..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-zinc-100/70 dark:bg-zinc-800/70 border border-zinc-200/60 dark:border-zinc-700/60 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full pl-11 pr-4 py-3 rounded-2xl bg-white dark:bg-navy-800 border border-lightBlue-100 dark:border-navy-700 text-sm font-bold text-navy dark:text-white placeholder-navy/40 focus:outline-none focus:ring-2 focus:ring-coral shadow-soft"
             />
           </div>
 
@@ -120,7 +115,7 @@ export const BookmarksPage: React.FC<BookmarksPageProps> = ({
             onChange={e =>
               setSelectedDeckFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))
             }
-            className="px-3.5 py-2.5 rounded-xl bg-zinc-100/70 dark:bg-zinc-800/70 border border-zinc-200/60 dark:border-zinc-700/60 text-xs font-semibold text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="px-4 py-3 rounded-2xl bg-white dark:bg-navy-800 border border-lightBlue-100 dark:border-navy-700 text-xs font-bold text-navy dark:text-lightBlue-100 focus:outline-none focus:ring-2 focus:ring-coral shadow-soft cursor-pointer"
           >
             <option value="all">All Topics ({bookmarkedCards.length})</option>
             {decks.map(d => {
@@ -138,93 +133,129 @@ export const BookmarksPage: React.FC<BookmarksPageProps> = ({
 
       {/* Bookmarks List */}
       {bookmarkedCards.length === 0 ? (
-        <EmptyState
-          icon={<Bookmark className="w-8 h-8 text-amber-500" />}
-          title="No Bookmarked Concepts Yet"
-          description="Whenever you encounter a tough card during flashcard study, click 'I Don't Remember' or the Bookmark icon to automatically save it here for targeted revision."
-          actionText="Study Flashcards"
-          onAction={onNavigateToDecks}
-        />
+        <div className="p-12 sm:p-16 rounded-4xl bg-white dark:bg-navy-800 border border-lightBlue-100 dark:border-navy-700 text-center space-y-4 shadow-soft">
+          <div className="w-16 h-16 mx-auto rounded-3xl bg-coral-50 flex items-center justify-center text-coral shadow-soft">
+            <Bookmark className="w-8 h-8 fill-coral" />
+          </div>
+          <div className="space-y-1.5">
+            <h3 className="text-xl font-black text-navy dark:text-white">
+              No concepts bookmarked yet.
+            </h3>
+            <p className="text-xs sm:text-sm font-semibold text-navy/60 dark:text-lightBlue-200 max-w-md mx-auto">
+              Cards you mark as "I Don't Remember" will appear here for targeted revision.
+            </p>
+          </div>
+          <div className="pt-2">
+            <Button variant="primary" onClick={onNavigateToDecks} className="font-bold">
+              Study Flashcards Now
+            </Button>
+          </div>
+        </div>
       ) : filteredCards.length === 0 ? (
-        <div className="text-center py-12 border border-dashed rounded-2xl border-zinc-300 dark:border-zinc-800 text-zinc-400 text-sm">
+        <div className="text-center py-12 bg-white dark:bg-navy-800 rounded-3xl border border-dashed border-lightBlue-200 text-navy/60 text-sm font-bold">
           No bookmarked concepts match your search.
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="flex items-center justify-between text-xs text-zinc-500 font-semibold px-1">
+          <div className="flex items-center justify-between text-xs font-bold text-navy/50 dark:text-lightBlue-200 px-2">
             <span>{filteredCards.length} concept{filteredCards.length !== 1 ? 's' : ''} saved for revision</span>
-            <span>Click "Review All" to study full deck</span>
+            <span>Click "Review All" to study full deck in 3D</span>
           </div>
 
           <div className="grid grid-cols-1 gap-4">
             {filteredCards.map((card, idx) => {
               const parentDeck = deckMap.get(card.deckId);
+              const isRevealed = revealedCardId === card.id;
+
               return (
-                <GlassCard
+                <div
                   key={card.id || idx}
-                  className="p-5 sm:p-6 border border-amber-300/40 dark:border-amber-600/30 hover:border-amber-400 dark:hover:border-amber-500 transition-all shadow-sm group"
+                  className="p-6 sm:p-7 rounded-3xl bg-white dark:bg-navy-800 border border-lightBlue-100 dark:border-navy-700 hover:border-lightBlue-200 shadow-soft hover:shadow-soft-md transition-all space-y-4"
                 >
                   <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
                     <div className="space-y-3 flex-1 min-w-0">
-                      {/* Topic & Metadata */}
+                      {/* Topic & Date Added */}
                       <div className="flex flex-wrap items-center gap-2">
                         {parentDeck && (
-                          <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-800/50 flex items-center gap-1">
-                            <Layers className="w-3 h-3" />
+                          <span className="text-[11px] font-black px-3 py-1 rounded-full bg-lightBlue-100 text-navy dark:bg-navy-700 dark:text-lightBlue-200 flex items-center gap-1">
+                            <Layers className="w-3 h-3 text-coral" />
                             {parentDeck.title}
                           </span>
                         )}
                         <CardTypeBadge type={card.type} />
-                        <DifficultyBadge difficulty={card.difficulty} />
-                        <span className="text-[11px] text-zinc-400 flex items-center gap-1">
+                        <span className="text-[11px] font-semibold text-navy/50 dark:text-lightBlue-200 flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
-                          Bookmarked: {formatDate(card.bookmarkedAt)}
+                          Date Added: {formatDate(card.bookmarkedAt)}
                         </span>
                       </div>
 
                       {/* Question */}
                       <div className="space-y-1">
-                        <div className="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                          <Star className="w-3 h-3 fill-amber-500" />
-                          Concept / Question
+                        <div className="text-[11px] font-black uppercase tracking-wider text-coral">
+                          Question / Concept
                         </div>
-                        <p className="text-base font-bold text-zinc-900 dark:text-zinc-100 whitespace-pre-line leading-relaxed">
+                        <p className="text-base font-extrabold text-navy dark:text-white whitespace-pre-line leading-relaxed">
                           {card.question}
                         </p>
                       </div>
 
                       {/* Answer */}
                       <div className="space-y-1 pt-1">
-                        <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                          Answer / Explanation
+                        <div className="text-[11px] font-black uppercase tracking-wider text-navy/60 dark:text-lightBlue-200 flex items-center justify-between">
+                          <span>Answer</span>
+                          {!isRevealed && (
+                            <button
+                              onClick={() => setRevealedCardId(card.id || null)}
+                              className="text-[11px] font-bold text-coral hover:underline"
+                            >
+                              Reveal Answer
+                            </button>
+                          )}
                         </div>
-                        <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 whitespace-pre-line leading-relaxed">
-                          {card.answer}
-                        </p>
+                        {isRevealed ? (
+                          <div className="p-3.5 rounded-2xl bg-pageBg dark:bg-navy-900 border border-lightBlue-100 dark:border-navy-700 space-y-1 animate-fade-in">
+                            <p className="text-sm font-bold text-navy dark:text-white whitespace-pre-line leading-relaxed">
+                              {card.answer}
+                            </p>
+                            {card.explanation && (
+                              <p className="text-xs text-navy/60 dark:text-lightBlue-200 italic pt-1 border-t border-lightBlue-200/40">
+                                {card.explanation}
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <p className="text-xs font-semibold text-navy/40 italic">
+                            (Hidden for active recall test — tap "Reveal Answer" or "Review" to test yourself)
+                          </p>
+                        )}
                       </div>
-
-                      {/* Explanation note */}
-                      {card.explanation && (
-                        <div className="p-3 rounded-xl bg-zinc-100/70 dark:bg-zinc-850/80 border border-zinc-200/50 dark:border-zinc-800 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                          <span className="font-bold text-indigo-500">Key Context: </span>
-                          {card.explanation}
-                        </div>
-                      )}
                     </div>
 
-                    {/* Action buttons */}
+                    {/* Actions: Review & Remove Bookmark */}
                     <div className="flex sm:flex-col items-center gap-2 self-end sm:self-start shrink-0">
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => {
+                          setRevealedCardId(prev => (prev === card.id ? null : card.id || null));
+                        }}
+                        className="text-xs font-bold"
+                      >
+                        <RotateCw className="w-3.5 h-3.5 mr-1" />
+                        {isRevealed ? 'Hide' : 'Review'}
+                      </Button>
+
                       <button
                         onClick={() => card.id && onRemoveBookmark(card.id)}
-                        title="Remove bookmark (I've learned this concept!)"
-                        className="px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white/80 dark:bg-zinc-800/80 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:border-rose-300 dark:hover:border-rose-800 text-zinc-600 hover:text-rose-600 dark:text-zinc-300 dark:hover:text-rose-400 text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm"
+                        title="Remove Bookmark"
+                        className="px-3 py-1.5 rounded-2xl bg-coral-50 hover:bg-coral-100 text-coral-700 text-xs font-bold transition-all flex items-center gap-1.5"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                         <span>Remove Bookmark</span>
                       </button>
                     </div>
                   </div>
-                </GlassCard>
+                </div>
               );
             })}
           </div>

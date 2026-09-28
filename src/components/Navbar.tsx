@@ -1,8 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Layers, BookOpen, BarChart3, Sun, Moon, Plus, Bookmark, Star, Keyboard } from 'lucide-react';
+import {
+  BookOpen,
+  Sparkles,
+  Layers,
+  Star,
+  BarChart3,
+  Bookmark,
+  Sun,
+  Moon,
+  Keyboard,
+  User,
+  Search,
+  HelpCircle,
+  Bell
+} from 'lucide-react';
 import { ViewMode } from '../types';
-import { Button } from './Button';
 import { ShortcutsModal } from './ShortcutsModal';
+import { ProfileModal } from './ProfileModal';
 
 export interface NavbarProps {
   currentView: ViewMode;
@@ -11,7 +25,8 @@ export interface NavbarProps {
   onToggleTheme: () => void;
   dueCardsCount: number;
   bookmarkedCount?: number;
-  onOpenUpload: () => void;
+  totalCardsCount?: number;
+  onOpenUpload?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -21,9 +36,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleTheme,
   dueCardsCount,
   bookmarkedCount = 0,
-  onOpenUpload,
+  totalCardsCount = 0,
 }) => {
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   useEffect(() => {
     const handleGlobalKey = (e: KeyboardEvent) => {
@@ -36,171 +52,212 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 w-full glass-panel border-b border-zinc-200/50 dark:border-zinc-800/60 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand / Logo */}
-        <div
-          onClick={() => onNavigate('home')}
-          className="flex items-center gap-2.5 cursor-pointer group select-none"
-        >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-            <BookOpen className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-zinc-900 via-indigo-950 to-zinc-700 dark:from-white dark:via-zinc-100 dark:to-zinc-400 bg-clip-text text-transparent">
-                Recall
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
-                100% Offline
-              </span>
+    <>
+      {/* Top Desktop & Tablet Navigation */}
+      <header className="sticky top-0 z-40 w-full bg-pageBg/90 dark:bg-navy-900/90 backdrop-blur-md border-b border-lightBlue-100/80 dark:border-navy-800 transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          {/* Logo on the left */}
+          <div
+            onClick={() => onNavigate('home')}
+            className="flex items-center gap-3 cursor-pointer select-none group"
+          >
+            <div className="w-11 h-11 rounded-2xl bg-navy text-white flex items-center justify-center shadow-navy-soft group-hover:scale-105 transition-transform">
+              <BookOpen className="w-5 h-5 text-yellowPastel" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-extrabold text-2xl tracking-tight text-navy dark:text-white">
+                  Recall
+                </span>
+                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-lightBlue-100 text-navy dark:bg-navy-700 dark:text-lightBlue-200">
+                  Study App
+                </span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Navigation Tabs */}
-        <nav className="hidden md:flex items-center gap-1 bg-zinc-100/80 dark:bg-zinc-800/60 p-1 rounded-2xl border border-zinc-200/60 dark:border-zinc-700/60 backdrop-blur-md">
+          {/* Desktop Navigation Items: Home, Quizzes, Flashcards, Bookmarks, Progress */}
+          <nav className="hidden md:flex items-center gap-1.5 p-1.5 rounded-full bg-white dark:bg-navy-800 border border-lightBlue-100/70 dark:border-navy-700 shadow-soft">
+            <button
+              onClick={() => onNavigate('home')}
+              className={`px-5 py-2 rounded-full text-xs font-bold transition-all ${
+                currentView === 'home'
+                  ? 'bg-navy text-white shadow-soft'
+                  : 'text-navy/70 dark:text-lightBlue-100 hover:text-navy dark:hover:text-white hover:bg-lightBlue-50/70 dark:hover:bg-navy-700'
+              }`}
+            >
+              Home
+            </button>
+
+            <button
+              onClick={() => onNavigate('quiz')}
+              className={`px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
+                currentView === 'quiz'
+                  ? 'bg-navy text-white shadow-soft'
+                  : 'text-navy/70 dark:text-lightBlue-100 hover:text-navy dark:hover:text-white hover:bg-lightBlue-50/70 dark:hover:bg-navy-700'
+              }`}
+            >
+              Quizzes
+            </button>
+
+            <button
+              onClick={() => onNavigate('study')}
+              className={`px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
+                currentView === 'study' || currentView === 'deck-detail'
+                  ? 'bg-navy text-white shadow-soft'
+                  : 'text-navy/70 dark:text-lightBlue-100 hover:text-navy dark:hover:text-white hover:bg-lightBlue-50/70 dark:hover:bg-navy-700'
+              }`}
+            >
+              Flashcards
+              {dueCardsCount > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-coral text-white font-extrabold animate-pulse">
+                  {dueCardsCount}
+                </span>
+              )}
+            </button>
+
+            <button
+              onClick={() => onNavigate('bookmarks')}
+              className={`px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
+                currentView === 'bookmarks'
+                  ? 'bg-navy text-white shadow-soft'
+                  : 'text-navy/70 dark:text-lightBlue-100 hover:text-navy dark:hover:text-white hover:bg-lightBlue-50/70 dark:hover:bg-navy-700'
+              }`}
+            >
+              Bookmarks
+              {bookmarkedCount > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-yellowPastel text-navy font-extrabold">
+                  {bookmarkedCount}
+                </span>
+              )}
+            </button>
+
+            <button
+              onClick={() => onNavigate('insights')}
+              className={`px-5 py-2 rounded-full text-xs font-bold transition-all ${
+                currentView === 'insights'
+                  ? 'bg-navy text-white shadow-soft'
+                  : 'text-navy/70 dark:text-lightBlue-100 hover:text-navy dark:hover:text-white hover:bg-lightBlue-50/70 dark:hover:bg-navy-700'
+              }`}
+            >
+              Progress
+            </button>
+          </nav>
+
+          {/* Right Action Icons: Keyboard Shortcuts & Profile Avatar */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              onClick={() => setIsShortcutsOpen(true)}
+              aria-label="View keyboard shortcuts"
+              title="Keyboard shortcuts (?)"
+              className="p-2.5 rounded-2xl bg-white dark:bg-navy-800 text-navy/70 dark:text-lightBlue-100 hover:text-navy dark:hover:text-white border border-lightBlue-100/70 dark:border-navy-700 shadow-soft transition-all"
+            >
+              <Keyboard className="w-4 h-4" />
+            </button>
+
+            <button
+              onClick={onToggleTheme}
+              aria-label="Toggle theme"
+              className="p-2.5 rounded-2xl bg-white dark:bg-navy-800 text-navy/70 dark:text-lightBlue-100 hover:text-navy dark:hover:text-white border border-lightBlue-100/70 dark:border-navy-700 shadow-soft transition-all"
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-yellowPastel-500" /> : <Moon className="w-4 h-4 text-navy" />}
+            </button>
+
+            {/* Profile Avatar on Right */}
+            <button
+              onClick={() => setIsProfileOpen(true)}
+              aria-label="User Profile"
+              className="flex items-center gap-2 p-1.5 pl-3 rounded-full bg-white dark:bg-navy-800 border border-lightBlue-100/70 dark:border-navy-700 shadow-soft hover:shadow-soft-md transition-all select-none"
+            >
+              <span className="text-xs font-bold text-navy dark:text-white hidden sm:inline">
+                Alex
+              </span>
+              <div className="w-8 h-8 rounded-full bg-coral text-white flex items-center justify-center font-bold text-xs shadow-coral-soft">
+                A
+              </div>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Rounded Bottom Navigation Bar */}
+      <div className="md:hidden fixed bottom-4 inset-x-4 z-40">
+        <nav className="bg-white/95 dark:bg-navy-900/95 backdrop-blur-xl border border-lightBlue-100 dark:border-navy-700 rounded-3xl p-2 shadow-soft-lg flex items-center justify-around">
           <button
             onClick={() => onNavigate('home')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+            className={`flex flex-col items-center gap-1 py-1.5 px-3 rounded-2xl text-[11px] font-bold transition-all ${
               currentView === 'home'
-                ? 'bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white shadow-sm'
-                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                ? 'bg-navy text-white shadow-soft'
+                : 'text-navy/60 dark:text-lightBlue-200'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
-            Upload & Create
+            <BookOpen className="w-4 h-4" />
+            <span>Home</span>
           </button>
 
           <button
-            onClick={() => onNavigate('decks')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
-              currentView === 'decks' || currentView === 'deck-detail'
-                ? 'bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white shadow-sm'
-                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+            onClick={() => onNavigate('quiz')}
+            className={`flex flex-col items-center gap-1 py-1.5 px-3 rounded-2xl text-[11px] font-bold transition-all ${
+              currentView === 'quiz'
+                ? 'bg-navy text-white shadow-soft'
+                : 'text-navy/60 dark:text-lightBlue-200'
             }`}
           >
-            <Layers className="w-3.5 h-3.5 text-indigo-500" />
-            Deck Library
+            <HelpCircle className="w-4 h-4" />
+            <span>Quiz</span>
+          </button>
+
+          <button
+            onClick={() => onNavigate('study')}
+            className={`flex flex-col items-center gap-1 py-1.5 px-3 rounded-2xl text-[11px] font-bold transition-all relative ${
+              currentView === 'study' || currentView === 'deck-detail'
+                ? 'bg-navy text-white shadow-soft'
+                : 'text-navy/60 dark:text-lightBlue-200'
+            }`}
+          >
+            <Layers className="w-4 h-4" />
+            <span>Flashcards</span>
             {dueCardsCount > 0 && (
-              <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-indigo-600 text-white font-bold animate-pulse">
-                {dueCardsCount} due
-              </span>
+              <span className="absolute top-1 right-2 w-2 h-2 rounded-full bg-coral" />
             )}
           </button>
 
           <button
             onClick={() => onNavigate('bookmarks')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+            className={`flex flex-col items-center gap-1 py-1.5 px-3 rounded-2xl text-[11px] font-bold transition-all relative ${
               currentView === 'bookmarks'
-                ? 'bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-400/40 shadow-sm'
-                : 'text-zinc-600 dark:text-zinc-400 hover:text-amber-600 dark:hover:text-amber-300'
+                ? 'bg-navy text-white shadow-soft'
+                : 'text-navy/60 dark:text-lightBlue-200'
             }`}
           >
-            <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-            My Bookmarks
+            <Bookmark className="w-4 h-4" />
+            <span>Bookmarks</span>
             {bookmarkedCount > 0 && (
-              <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-amber-500 text-white font-extrabold shadow-sm">
-                {bookmarkedCount}
-              </span>
+              <span className="absolute top-1 right-2 w-2 h-2 rounded-full bg-yellowPastel" />
             )}
           </button>
 
           <button
-            onClick={() => onNavigate('insights')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
-              currentView === 'insights'
-                ? 'bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white shadow-sm'
-                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
-            }`}
+            onClick={() => setIsProfileOpen(true)}
+            className="flex flex-col items-center gap-1 py-1.5 px-3 rounded-2xl text-[11px] font-bold text-navy/60 dark:text-lightBlue-200"
           >
-            <BarChart3 className="w-3.5 h-3.5 text-indigo-500" />
-            Insights & Stats
+            <User className="w-4 h-4" />
+            <span>Profile</span>
           </button>
         </nav>
-
-
-        {/* Right Action Icons */}
-        <div className="flex items-center gap-2">
-          <Button
-            onClick={onOpenUpload}
-            size="sm"
-            variant="primary"
-            className="hidden sm:inline-flex shadow-sm"
-          >
-            <Plus className="w-4 h-4 mr-0.5" />
-            New Deck
-          </Button>
-
-          {/* Keyboard Shortcuts Trigger */}
-          <button
-            onClick={() => setIsShortcutsOpen(true)}
-            aria-label="View keyboard shortcuts"
-            title="Keyboard shortcuts (?)"
-            className="p-2 rounded-xl text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700"
-          >
-            <Keyboard className="w-4 h-4" />
-          </button>
-
-          {/* Theme Toggle */}
-          <button
-            onClick={onToggleTheme}
-            aria-label="Toggle theme"
-            className="p-2 rounded-xl text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700"
-          >
-            {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-600" />}
-          </button>
-        </div>
       </div>
 
+      {/* Modals */}
       <ShortcutsModal isOpen={isShortcutsOpen} onClose={() => setIsShortcutsOpen(false)} />
-
-
-      {/* Mobile Nav Bar */}
-      <div className="flex md:hidden items-center justify-around border-t border-zinc-200/50 dark:border-zinc-800/60 px-2 py-2">
-        <button
-          onClick={() => onNavigate('home')}
-          className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg text-[11px] font-medium ${
-            currentView === 'home' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-zinc-500'
-          }`}
-        >
-          <Sparkles className="w-4 h-4" />
-          Create
-        </button>
-        <button
-          onClick={() => onNavigate('decks')}
-          className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg text-[11px] font-medium relative ${
-            currentView === 'decks' || currentView === 'deck-detail' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-zinc-500'
-          }`}
-        >
-          <Layers className="w-4 h-4" />
-          Decks
-          {dueCardsCount > 0 && (
-            <span className="absolute top-0 right-2 w-2 h-2 rounded-full bg-indigo-600 ring-2 ring-white dark:ring-zinc-900" />
-          )}
-        </button>
-        <button
-          onClick={() => onNavigate('bookmarks')}
-          className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg text-[11px] font-medium relative ${
-            currentView === 'bookmarks' ? 'text-amber-500 font-bold' : 'text-zinc-500'
-          }`}
-        >
-          <Bookmark className="w-4 h-4" />
-          Bookmarks
-          {bookmarkedCount > 0 && (
-            <span className="absolute top-0 right-1 w-2 h-2 rounded-full bg-amber-500 ring-2 ring-white dark:ring-zinc-900" />
-          )}
-        </button>
-        <button
-          onClick={() => onNavigate('insights')}
-          className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg text-[11px] font-medium ${
-            currentView === 'insights' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-zinc-500'
-          }`}
-        >
-          <BarChart3 className="w-4 h-4" />
-          Stats
-        </button>
-      </div>
-    </header>
+      <ProfileModal
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        theme={theme}
+        onToggleTheme={onToggleTheme}
+        totalCards={totalCardsCount}
+        bookmarkedCount={bookmarkedCount}
+        onOpenShortcuts={() => setIsShortcutsOpen(true)}
+      />
+    </>
   );
 };

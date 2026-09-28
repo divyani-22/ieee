@@ -174,90 +174,87 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onGenerate, isGenerating
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 animate-fade-in pb-16">
-      {/* Hero Header */}
-      <div className="text-center space-y-3 pt-6 sm:pt-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200/60 dark:border-indigo-800/60 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Zero Server Overhead • Completely In-Browser & Private</span>
-        </div>
-        <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
-          Turn Lecture Material into{' '}
-          <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-            Mastery Decks
-          </span>
-        </h1>
-        <p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-          Drop your lecture slides, scanned book pages, or notes. Recall automatically extracts text, runs OCR in a Web Worker, and crafts high-retention flashcards and quizzes without sending your data anywhere.
-        </p>
+        {/* Header */}
+        <div className="text-center space-y-3 pt-4 sm:pt-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-lightBlue-100/70 text-navy-800 text-xs font-bold border border-lightBlue-200">
+            <Sparkles className="w-3.5 h-3.5 text-coral-500" />
+            <span>Zero Server Overhead • 100% In-Browser & Private</span>
+          </div>
+          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-navy-900 dark:text-white">
+            Upload Lecture Notes & PDFs
+          </h2>
+          <p className="text-navy-700/70 dark:text-zinc-300 max-w-2xl mx-auto text-sm sm:text-base font-medium leading-relaxed">
+            Drop your lecture slides, scanned notes, or paste text. Recall extracts content, runs OCR client-side, and generates flipable flashcards and quizzes instantly.
+          </p>
 
-        {/* Quick Sample Presets */}
-        <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
-          <span className="text-xs font-medium text-zinc-400">Quick Test:</span>
-          <button
-            type="button"
-            onClick={() => loadSample('neuro')}
-            className="text-xs font-semibold px-3 py-1 rounded-lg bg-zinc-100 hover:bg-indigo-50 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 transition-colors"
-          >
-            🧠 Neuroscience Notes
-          </button>
-          <button
-            type="button"
-            onClick={() => loadSample('bio')}
-            className="text-xs font-semibold px-3 py-1 rounded-lg bg-zinc-100 hover:bg-indigo-50 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 transition-colors"
-          >
-            🧬 Cell Biology Markdown
-          </button>
-          <button
-            type="button"
-            onClick={() => loadSample('pdf')}
-            className="text-xs font-semibold px-3 py-1 rounded-lg bg-zinc-100 hover:bg-indigo-50 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 transition-colors"
-          >
-            📄 Sample PDF Document
-          </button>
-        </div>
-      </div>
-
-      {/* Main Ingestion Container */}
-      <GlassCard elevated className="p-6 sm:p-8 space-y-6">
-        {/* Deck Title Input */}
-        <div className="space-y-1.5">
-          <label className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-            Deck Title
-          </label>
-          <input
-            type="text"
-            placeholder="e.g., Computer Architecture Lecture 3 or Organic Chemistry Quiz"
-            value={deckTitle}
-            onChange={e => setDeckTitle(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl bg-zinc-50/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium transition-all"
-          />
+          {/* Quick Sample Presets */}
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+            <span className="text-xs font-bold text-navy-400 uppercase tracking-wider">Try Sample:</span>
+            <button
+              type="button"
+              onClick={() => loadSample('neuro')}
+              className="text-xs font-bold px-3.5 py-1.5 rounded-2xl bg-white dark:bg-navy-800 hover:bg-lightBlue-50 text-navy-800 dark:text-zinc-200 border border-lightBlue-200/80 shadow-soft transition-all"
+            >
+              🧠 Neuroscience Notes
+            </button>
+            <button
+              type="button"
+              onClick={() => loadSample('bio')}
+              className="text-xs font-bold px-3.5 py-1.5 rounded-2xl bg-white dark:bg-navy-800 hover:bg-lightBlue-50 text-navy-800 dark:text-zinc-200 border border-lightBlue-200/80 shadow-soft transition-all"
+            >
+              🧬 Cell Biology Notes
+            </button>
+            <button
+              type="button"
+              onClick={() => loadSample('pdf')}
+              className="text-xs font-bold px-3.5 py-1.5 rounded-2xl bg-white dark:bg-navy-800 hover:bg-lightBlue-50 text-navy-800 dark:text-zinc-200 border border-lightBlue-200/80 shadow-soft transition-all"
+            >
+              📄 Sample Lecture PDF
+            </button>
+          </div>
         </div>
 
-        {/* Input Mode Tabs */}
-        <div className="flex border-b border-zinc-200 dark:border-zinc-800">
-          <button
-            onClick={() => setActiveTab('upload')}
-            className={`pb-3 px-4 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
-              activeTab === 'upload'
-                ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-                : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300'
-            }`}
-          >
-            <UploadCloud className="w-4 h-4" />
-            File Upload & OCR (PDF, Images, TXT)
-          </button>
-          <button
-            onClick={() => setActiveTab('paste')}
-            className={`pb-3 px-4 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
-              activeTab === 'paste'
-                ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-                : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300'
-            }`}
-          >
-            <Edit3 className="w-4 h-4" />
-            Paste Raw Lecture Notes
-          </button>
-        </div>
+        {/* Main Ingestion Container */}
+        <div className="bg-white dark:bg-navy-850 rounded-4xl p-6 sm:p-8 space-y-6 shadow-soft border border-lightBlue-100 dark:border-navy-700">
+          {/* Deck Title Input */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold uppercase tracking-wider text-navy-700 dark:text-zinc-400">
+              Deck Title
+            </label>
+            <input
+              type="text"
+              placeholder="e.g., Cellular Neuroscience or Bioenergetics Quiz"
+              value={deckTitle}
+              onChange={e => setDeckTitle(e.target.value)}
+              className="w-full px-4 py-3 rounded-2xl bg-pageBg/60 dark:bg-navy-900 border border-lightBlue-200/80 dark:border-navy-700 text-navy-900 dark:text-white placeholder-navy-300 font-semibold focus:outline-none focus:ring-2 focus:ring-coral-400 transition-all"
+            />
+          </div>
+
+          {/* Input Mode Tabs */}
+          <div className="flex gap-2 p-1.5 bg-pageBg dark:bg-navy-900 rounded-2xl border border-lightBlue-200/60 dark:border-navy-800">
+            <button
+              onClick={() => setActiveTab('upload')}
+              className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
+                activeTab === 'upload'
+                  ? 'bg-white dark:bg-navy-800 text-navy-900 dark:text-white shadow-soft'
+                  : 'text-navy-600 dark:text-zinc-400 hover:text-navy-900'
+              }`}
+            >
+              <UploadCloud className="w-4 h-4 text-coral-500" />
+              File Upload & OCR (PDF, Images, TXT)
+            </button>
+            <button
+              onClick={() => setActiveTab('paste')}
+              className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
+                activeTab === 'paste'
+                  ? 'bg-white dark:bg-navy-800 text-navy-900 dark:text-white shadow-soft'
+                  : 'text-navy-600 dark:text-zinc-400 hover:text-navy-900'
+              }`}
+            >
+              <Edit3 className="w-4 h-4 text-lightBlue-500" />
+              Paste Lecture Notes
+            </button>
+          </div>
 
         {/* Mode 1: File Dropzone */}
         {activeTab === 'upload' ? (
@@ -268,10 +265,10 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onGenerate, isGenerating
               onDragLeave={handleDrag}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center gap-3 ${
+              className={`border-2 border-dashed rounded-3xl p-8 sm:p-12 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center gap-3 ${
                 dragActive
-                  ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-950/30 scale-[0.99]'
-                  : 'border-zinc-300 dark:border-zinc-700 hover:border-indigo-400 dark:hover:border-indigo-500 bg-zinc-50/50 dark:bg-zinc-900/30'
+                  ? 'border-coral-400 bg-coral-50/50 dark:bg-navy-800 scale-[0.99]'
+                  : 'border-lightBlue-200 dark:border-navy-700 hover:border-coral-300 bg-pageBg/40 dark:bg-navy-900/40'
               }`}
             >
               <input
@@ -283,30 +280,30 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onGenerate, isGenerating
                 onChange={e => e.target.files && handleFiles(e.target.files)}
               />
 
-              <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shadow-sm">
-                <UploadCloud className="w-7 h-7" />
+              <div className="w-16 h-16 rounded-3xl bg-lightBlue-100 text-navy-800 flex items-center justify-center shadow-soft">
+                <UploadCloud className="w-8 h-8 text-navy-900" />
               </div>
 
               <div>
-                <p className="text-base font-semibold text-zinc-800 dark:text-zinc-200">
+                <p className="text-base sm:text-lg font-bold text-navy-900 dark:text-white">
                   Click to browse or drag and drop lecture files
                 </p>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                <p className="text-xs sm:text-sm text-navy-600/70 dark:text-zinc-400 mt-1 font-medium">
                   Supports Digital & Scanned PDFs, Photos of notes (OCR), TXT, Markdown
                 </p>
               </div>
 
-              <div className="flex items-center gap-4 text-xs text-zinc-400 pt-2">
+              <div className="flex items-center gap-4 text-xs font-semibold text-navy-400 pt-2">
                 <span className="flex items-center gap-1">
-                  <FileText className="w-3.5 h-3.5 text-indigo-500" /> PDF & Text
+                  <FileText className="w-3.5 h-3.5 text-navy-600" /> PDF & Text
                 </span>
                 <span>•</span>
                 <span className="flex items-center gap-1">
-                  <ImageIcon className="w-3.5 h-3.5 text-purple-500" /> Camera OCR
+                  <ImageIcon className="w-3.5 h-3.5 text-coral-500" /> Camera OCR
                 </span>
                 <span>•</span>
                 <span className="flex items-center gap-1">
-                  <Cpu className="w-3.5 h-3.5 text-emerald-500" /> Auto Scanned Detection
+                  <Cpu className="w-3.5 h-3.5 text-lightBlue-600" /> Auto Scanned Detection
                 </span>
               </div>
             </div>
@@ -314,14 +311,14 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onGenerate, isGenerating
             {/* Ingestion Files Progress List */}
             {filesProgress.length > 0 && (
               <div className="space-y-3">
-                <div className="flex items-center justify-between text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                <div className="flex items-center justify-between text-xs font-bold text-navy-500 uppercase tracking-wider">
                   <span>Processed Files ({filesProgress.length})</span>
                   {previewText && (
                     <button
                       onClick={() => setIsPreviewOpen(true)}
-                      className="text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 normal-case"
+                      className="text-navy-800 dark:text-lightBlue-300 hover:underline flex items-center gap-1 font-bold normal-case"
                     >
-                      <Edit3 className="w-3.5 h-3.5" /> Preview / Edit Extracted Text ({previewText.split(/\s+/).length} words)
+                      <Edit3 className="w-3.5 h-3.5 text-coral-500" /> Preview / Edit Extracted Text ({previewText.split(/\s+/).length} words)
                     </button>
                   )}
                 </div>
@@ -330,10 +327,10 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onGenerate, isGenerating
                   {filesProgress.map(file => (
                     <div
                       key={file.id}
-                      className="p-3.5 rounded-xl bg-zinc-100/70 dark:bg-zinc-850 border border-zinc-200/60 dark:border-zinc-800 flex items-center justify-between gap-4"
+                      className="p-3.5 rounded-2xl bg-white dark:bg-navy-800 border border-lightBlue-100 dark:border-navy-700 shadow-soft flex items-center justify-between gap-4"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="p-2 rounded-lg bg-indigo-50 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shrink-0">
+                        <div className="p-2.5 rounded-xl bg-lightBlue-100 text-navy-900 shrink-0">
                           {file.name.endsWith('.pdf') ? (
                             <FileText className="w-4 h-4" />
                           ) : (
@@ -341,14 +338,14 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onGenerate, isGenerating
                           )}
                         </div>
                         <div className="truncate">
-                          <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 truncate">
+                          <p className="text-xs font-bold text-navy-900 dark:text-zinc-200 truncate">
                             {file.name}
                           </p>
-                          <div className="flex items-center gap-2 text-[11px] text-zinc-400 mt-0.5">
+                          <div className="flex items-center gap-2 text-[11px] text-navy-500 mt-0.5 font-medium">
                             <span>{(file.size / 1024).toFixed(0)} KB</span>
                             {file.pageCount && <span>• {file.pageCount} pages</span>}
                             {file.scannedPagesDetected ? (
-                              <span className="text-amber-500 font-medium">
+                              <span className="text-yellow-600 font-bold">
                                 • {file.scannedPagesDetected} OCR rasterized
                               </span>
                             ) : null}
@@ -359,20 +356,20 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onGenerate, isGenerating
                       {/* Status indicator */}
                       <div className="w-36 text-right shrink-0">
                         {file.status === 'done' ? (
-                          <div className="flex items-center justify-end gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                          <div className="flex items-center justify-end gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
                             <CheckCircle2 className="w-4 h-4" /> Ready
                           </div>
                         ) : file.status === 'error' ? (
-                          <div className="flex items-center justify-end gap-1 text-xs font-medium text-rose-500">
+                          <div className="flex items-center justify-end gap-1 text-xs font-bold text-coral-500">
                             <AlertCircle className="w-4 h-4" /> Error
                           </div>
                         ) : (
                           <div className="space-y-1">
-                            <div className="flex justify-between text-[10px] text-zinc-400">
+                            <div className="flex justify-between text-[10px] text-navy-400 font-bold">
                               <span className="capitalize">{file.status}...</span>
                               <span>{file.progress}%</span>
                             </div>
-                            <ProgressBar progress={file.progress} color="bg-indigo-500" />
+                            <ProgressBar progress={file.progress} color="bg-coral-500" />
                           </div>
                         )}
                       </div>
@@ -393,9 +390,9 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onGenerate, isGenerating
                 setPastedText(e.target.value);
                 setPreviewText(e.target.value);
               }}
-              className="w-full p-4 rounded-xl bg-zinc-50/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-xs leading-relaxed"
+              className="w-full p-4 rounded-2xl bg-pageBg/60 dark:bg-navy-900 border border-lightBlue-200 dark:border-navy-700 text-navy-900 dark:text-white placeholder-navy-400 focus:outline-none focus:ring-2 focus:ring-coral-400 font-mono text-xs leading-relaxed"
             />
-            <div className="flex justify-between text-xs text-zinc-400">
+            <div className="flex justify-between text-xs text-navy-500 font-medium">
               <span>{pastedText ? `${pastedText.split(/\s+/).filter(Boolean).length} words` : '0 words'}</span>
               <span>Minimum ~30 words recommended</span>
             </div>
@@ -403,17 +400,17 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onGenerate, isGenerating
         )}
 
         {/* Generation Settings Panel */}
-        <div className="pt-4 border-t border-zinc-200/80 dark:border-zinc-800 space-y-5">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-            <Sliders className="w-4 h-4 text-indigo-500" /> Generation Engine Tuning
+        <div className="pt-4 border-t border-lightBlue-100 dark:border-navy-800 space-y-5">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-navy-600 dark:text-zinc-400">
+            <Sliders className="w-4 h-4 text-coral-500" /> Generation Engine Tuning
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Density Slider */}
             <div className="space-y-2">
-              <div className="flex justify-between items-center text-xs font-medium text-zinc-700 dark:text-zinc-300">
+              <div className="flex justify-between items-center text-xs font-bold text-navy-900 dark:text-zinc-300">
                 <span>Card Density (per section):</span>
-                <span className="px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-bold">
+                <span className="px-2.5 py-0.5 rounded-full bg-lightBlue-100 text-navy-900 font-extrabold text-xs">
                   {density} cards / section
                 </span>
               </div>
@@ -424,9 +421,9 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onGenerate, isGenerating
                 step="1"
                 value={density}
                 onChange={e => setDensity(Number(e.target.value))}
-                className="w-full accent-indigo-600 cursor-pointer"
+                className="w-full accent-coral-500 cursor-pointer"
               />
-              <div className="flex justify-between text-[10px] text-zinc-400">
+              <div className="flex justify-between text-[11px] font-semibold text-navy-400">
                 <span>Concise (2)</span>
                 <span>Balanced (5)</span>
                 <span>Exhaustive (10)</span>
@@ -435,7 +432,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onGenerate, isGenerating
 
             {/* Difficulty Filter */}
             <div className="space-y-2">
-              <div className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+              <div className="text-xs font-bold text-navy-900 dark:text-zinc-300">
                 Target Difficulty:
               </div>
               <div className="grid grid-cols-4 gap-1.5">
@@ -444,10 +441,10 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onGenerate, isGenerating
                     key={d}
                     type="button"
                     onClick={() => setDifficulty(d)}
-                    className={`py-1.5 px-2 rounded-xl text-xs font-semibold capitalize transition-all border ${
+                    className={`py-2 px-2 rounded-xl text-xs font-bold capitalize transition-all border ${
                       difficulty === d
-                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
-                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-750'
+                        ? 'bg-navy-900 text-white border-navy-900 shadow-soft'
+                        : 'bg-pageBg dark:bg-navy-800 text-navy-700 dark:text-zinc-400 border-lightBlue-200/80 hover:bg-lightBlue-50'
                     }`}
                   >
                     {d}
@@ -459,7 +456,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onGenerate, isGenerating
 
           {/* Card Types Selection */}
           <div className="space-y-2">
-            <div className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+            <div className="text-xs font-bold text-navy-900 dark:text-zinc-300">
               Interactive Card Modes to Synthesize:
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -475,25 +472,25 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onGenerate, isGenerating
                     key={item.type}
                     type="button"
                     onClick={() => toggleType(item.type)}
-                    className={`p-3 rounded-xl border text-left transition-all ${
+                    className={`p-3.5 rounded-2xl border text-left transition-all ${
                       active
-                        ? 'bg-indigo-50/80 dark:bg-indigo-950/40 border-indigo-500/80 ring-1 ring-indigo-500'
-                        : 'bg-zinc-50/50 dark:bg-zinc-900/40 border-zinc-200 dark:border-zinc-800 opacity-60'
+                        ? 'bg-lightBlue-50/90 dark:bg-navy-800 border-navy-900 dark:border-lightBlue-400 shadow-soft'
+                        : 'bg-pageBg/40 dark:bg-navy-900/40 border-lightBlue-200/70 dark:border-navy-800 opacity-60'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
+                      <span className="text-xs font-extrabold text-navy-900 dark:text-zinc-100">
                         {item.label}
                       </span>
                       <div
-                        className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${
-                          active ? 'bg-indigo-600 text-white' : 'border border-zinc-400'
+                        className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                          active ? 'bg-navy-900 text-white' : 'border border-navy-300'
                         }`}
                       >
                         {active && '✓'}
                       </div>
                     </div>
-                    <p className="text-[10px] text-zinc-400">{item.desc}</p>
+                    <p className="text-[11px] text-navy-600/70 font-medium">{item.desc}</p>
                   </button>
                 );
               })}
@@ -501,21 +498,21 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onGenerate, isGenerating
           </div>
 
           {/* Optional Smart Mode (WebLLM) Toggle */}
-          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-purple-500/10 via-indigo-500/10 to-transparent border border-purple-500/20 flex items-center justify-between gap-4">
+          <div className="p-4 rounded-3xl bg-lightBlue-50/70 dark:bg-navy-800 border border-lightBlue-200/80 dark:border-navy-700 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-purple-500/20 text-purple-600 dark:text-purple-400">
+              <div className="p-2.5 rounded-2xl bg-coral-100 text-coral-600 shrink-0">
                 <Cpu className="w-5 h-5" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">
+                  <span className="text-xs font-bold text-navy-900 dark:text-zinc-100">
                     Smart Mode (WebGPU In-Browser AI)
                   </span>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-600 dark:text-purple-400 font-bold uppercase">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-yellowPastel text-navy-900 font-extrabold uppercase">
                     Optional
                   </span>
                 </div>
-                <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                <p className="text-[11px] text-navy-600/70 dark:text-zinc-400 font-medium">
                   Uses device GPU for semantic depth. Gracefully falls back to instant local NLP if unavailable.
                 </p>
               </div>
@@ -527,17 +524,17 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onGenerate, isGenerating
                 onChange={e => setSmartMode(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-zinc-300 peer-focus:outline-none rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-purple-600"></div>
+              <div className="w-11 h-6 bg-zinc-300 peer-focus:outline-none rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-coral-500"></div>
             </label>
           </div>
         </div>
 
         {/* Generate Call to Action */}
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-xs text-zinc-400">
+          <div className="text-xs text-navy-500 font-medium">
             {readyToGenerate ? (
-              <span className="text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" /> Content verified and ready for generation
+              <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                <CheckCircle2 className="w-4 h-4" /> Content verified and ready for generation
               </span>
             ) : (
               <span>Upload lecture documents or paste notes above to continue</span>
@@ -546,18 +543,18 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ onGenerate, isGenerating
 
           <Button
             size="lg"
-            variant="primary"
+            variant="coral"
             disabled={!readyToGenerate || isGenerating}
             loading={isGenerating}
             onClick={handleStartGeneration}
-            className="w-full sm:w-auto shadow-lg shadow-indigo-500/25 px-8"
+            className="w-full sm:w-auto shadow-coral-soft px-8 text-white font-bold"
           >
             <Sparkles className="w-4 h-4 mr-2" />
-            Generate Flashcards & Quizzes
+            Generate Flipable Flashcards & Quizzes
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>
-      </GlassCard>
+      </div>
 
       {/* Extracted Text Preview / Edit Modal */}
       {isPreviewOpen && (

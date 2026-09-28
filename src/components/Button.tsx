@@ -1,7 +1,7 @@
 import React, { ButtonHTMLAttributes } from 'react';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline' | 'subtle';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline' | 'subtle' | 'coral' | 'yellow' | 'navy';
   size?: 'sm' | 'md' | 'lg' | 'icon';
   loading?: boolean;
 }
@@ -15,15 +15,18 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100 select-none';
+  const baseStyles = 'inline-flex items-center justify-center font-bold rounded-2xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100 select-none';
 
   const variantStyles = {
-    primary: 'bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white shadow-lg shadow-indigo-500/25 focus:ring-indigo-500 border border-indigo-400/30',
-    secondary: 'bg-white/80 dark:bg-zinc-800/80 hover:bg-white dark:hover:bg-zinc-750 text-zinc-900 dark:text-zinc-100 border border-zinc-200/80 dark:border-zinc-700/80 shadow-sm backdrop-blur-md focus:ring-zinc-400',
-    ghost: 'hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 focus:ring-zinc-400',
-    danger: 'bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/20 focus:ring-red-500',
-    outline: 'border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 text-zinc-800 dark:text-zinc-200 focus:ring-zinc-400',
-    subtle: 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-950/70 border border-indigo-200/50 dark:border-indigo-800/50',
+    primary: 'bg-navy hover:bg-navy-700 text-white shadow-soft-md hover:shadow-soft-lg focus:ring-navy-600',
+    secondary: 'bg-lightBlue-100 hover:bg-lightBlue-200 text-navy border border-lightBlue-200/60 shadow-soft focus:ring-lightBlue',
+    coral: 'bg-coral hover:bg-coral-500 text-white shadow-coral-soft hover:shadow-lg focus:ring-coral-400',
+    yellow: 'bg-yellowPastel hover:bg-yellowPastel-500 text-navy shadow-yellow-soft focus:ring-yellowPastel',
+    navy: 'bg-navy hover:bg-navy-700 text-white shadow-navy-soft focus:ring-navy',
+    ghost: 'hover:bg-lightBlue-50 dark:hover:bg-navy-800 text-navy dark:text-lightBlue-100 focus:ring-lightBlue',
+    danger: 'bg-coral hover:bg-coral-600 text-white shadow-coral-soft focus:ring-coral',
+    outline: 'border-2 border-navy/20 dark:border-white/20 hover:border-navy text-navy dark:text-white bg-white/50 dark:bg-navy-900/50 focus:ring-navy',
+    subtle: 'bg-lightBlue-50 dark:bg-navy-800/80 text-navy dark:text-lightBlue-200 hover:bg-lightBlue-100 border border-lightBlue-200/50',
   };
 
   const sizeStyles = {

@@ -7,14 +7,15 @@ import { generateCardsFromText } from './services/nlp';
 import { SAMPLE_NEUROSCIENCE_TEXT } from './samples/sampleDecks';
 import { useTheme } from './hooks/useTheme';
 import { Navbar } from './components/Navbar';
+import { HeroSection } from './features/landing/HeroSection';
+import { DashboardOverview } from './features/dashboard/DashboardOverview';
 import { UploadZone } from './features/upload/UploadZone';
 import { DeckLibrary } from './features/library/DeckLibrary';
 import { DeckDetail } from './features/library/DeckDetail';
 import { FlashcardViewer } from './features/study/FlashcardViewer';
 import { QuizSession } from './features/quiz/QuizSession';
-import { AnalyticsView } from './features/insights/AnalyticsView';
 import { BookmarksPage } from './features/bookmarks/BookmarksPage';
-import { StarFeaturesSection } from './features/star/StarFeaturesSection';
+import { ProgressPage } from './features/progress/ProgressPage';
 import { EmptyState } from './components/EmptyState';
 import { Target, Layers } from 'lucide-react';
 
@@ -294,30 +295,58 @@ export const App: React.FC = () => {
         onToggleTheme={toggleTheme}
         dueCardsCount={totalDueCardsCount}
         bookmarkedCount={bookmarkedCards.length}
+        totalCardsCount={allCards.length}
         onOpenUpload={() => {
           setIsReviewingBookmarks(false);
           setCurrentView('home');
+          setTimeout(() => {
+            document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
         }}
       />
 
       {/* Main View Router */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {currentView === 'home' && (
-          <div className="space-y-8">
-            {/* Star Features Section */}
-            <StarFeaturesSection
-              bookmarkedCount={bookmarkedCards.length}
-              onStartQuiz={handleLaunchQuizWithLevel}
-              onStudyFlashcards={handleLaunchFlashcards}
-              onOpenBookmarks={() => setCurrentView('bookmarks')}
-              onReviewAllBookmarks={handleReviewAllBookmarks}
+          <div className="space-y-12">
+            {/* Landing Hero Section with Visual Floating Screens */}
+            <HeroSection
+              onStartLearning={() => {
+                if (decks.length > 0) {
+                  handleLaunchFlashcards();
+                } else {
+                  document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              onExploreFeatures={() => {
+                document.getElementById('dashboard-overview')?.scrollIntoView({ behavior: 'smooth' });
+              }}
             />
 
+            {/* Dashboard Overview Cards */}
+            <div id="dashboard-overview">
+              <DashboardOverview
+                studentName="Alex"
+                totalCards={allCards.length}
+                bookmarkedCount={bookmarkedCards.length}
+                dueCardsCount={totalDueCardsCount}
+                onOpenQuiz={() => handleLaunchQuizWithLevel('intermediate')}
+                onOpenFlashcards={handleLaunchFlashcards}
+                onOpenBookmarks={() => setCurrentView('bookmarks')}
+                onReviewAllBookmarks={handleReviewAllBookmarks}
+                onOpenUpload={() => {
+                  document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              />
+            </div>
+
             {/* Ingestion & Upload Zone */}
-            <UploadZone
-              onGenerate={handleGenerate}
-              isGenerating={isGenerating}
-            />
+            <div id="upload-section">
+              <UploadZone
+                onGenerate={handleGenerate}
+                isGenerating={isGenerating}
+              />
+            </div>
           </div>
         )}
 
@@ -420,7 +449,7 @@ export const App: React.FC = () => {
         )}
 
         {currentView === 'insights' && (
-          <AnalyticsView
+          <ProgressPage
             decks={decks}
             allCards={allCards}
             studyLogs={studyLogs}
@@ -435,8 +464,8 @@ export const App: React.FC = () => {
       {/* Floating Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 animate-fade-in pointer-events-none">
-          <div className="glass-panel-elevated px-4 py-3 rounded-2xl shadow-2xl border border-indigo-500/40 text-xs font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping" />
+          <div className="bg-navy-900 text-white px-5 py-3 rounded-2xl shadow-soft-lg border border-navy-700 text-xs font-bold flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-coral-400 animate-ping" />
             {toastMessage}
           </div>
         </div>
