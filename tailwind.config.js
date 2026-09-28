@@ -11,13 +11,6 @@ export default {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         // Reference design palette
-        primaryYellow: '#FFD84D',
-        periwinkle: '#A9BFF5',
-        coralRed: '#F26B6B',
-        textNavy: '#2B3350',
-        mutedBlue: '#9AA3BD',
-        canvasBg: '#F1F5FF',
-        screenBg: '#F6F8FF',
         navy: {
           DEFAULT: '#20294F',
           50: '#F4F6FB',
@@ -95,15 +88,11 @@ export default {
         '5xl': '3rem',
       },
       fontFamily: {
-        sans: ['Poppins', 'Nunito', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
-        poppins: ['Poppins', 'sans-serif'],
-        nunito: ['Nunito', 'sans-serif'],
-        display: ['Poppins', 'Nunito', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
       boxShadow: {
-        'phone': '0 20px 50px rgba(120, 140, 200, 0.25)',
-        'phone-center': '0 28px 65px rgba(100, 125, 195, 0.35)',
         'soft': '0 8px 30px rgba(32, 41, 79, 0.06)',
         'soft-md': '0 12px 35px rgba(32, 41, 79, 0.08)',
         'soft-lg': '0 20px 45px rgba(32, 41, 79, 0.1)',
