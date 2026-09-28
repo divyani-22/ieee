@@ -15,5 +15,16 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
+    chunkSizeWarningLimit: 1200,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-pdf': ['pdfjs-dist'],
+          'vendor-ocr': ['tesseract.js'],
+          'vendor-motion': ['framer-motion', 'canvas-confetti'],
+          'vendor-db': ['dexie', 'dexie-react-hooks'],
+        },
+      },
+    },
   },
 });

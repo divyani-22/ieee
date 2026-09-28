@@ -1,7 +1,8 @@
-import React from 'react';
-import { Sparkles, Layers, BookOpen, BarChart3, Sun, Moon, Plus, Bookmark, Star } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Sparkles, Layers, BookOpen, BarChart3, Sun, Moon, Plus, Bookmark, Star, Keyboard } from 'lucide-react';
 import { ViewMode } from '../types';
 import { Button } from './Button';
+import { ShortcutsModal } from './ShortcutsModal';
 
 export interface NavbarProps {
   currentView: ViewMode;
@@ -22,6 +23,18 @@ export const Navbar: React.FC<NavbarProps> = ({
   bookmarkedCount = 0,
   onOpenUpload,
 }) => {
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+
+  useEffect(() => {
+    const handleGlobalKey = (e: KeyboardEvent) => {
+      if (e.key === '?' && !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) {
+        setIsShortcutsOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleGlobalKey);
+    return () => window.removeEventListener('keydown', handleGlobalKey);
+  }, []);
+
   return (
     <header className="sticky top-0 z-40 w-full glass-panel border-b border-zinc-200/50 dark:border-zinc-800/60 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -119,6 +132,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             New Deck
           </Button>
 
+          {/* Keyboard Shortcuts Trigger */}
+          <button
+            onClick={() => setIsShortcutsOpen(true)}
+            aria-label="View keyboard shortcuts"
+            title="Keyboard shortcuts (?)"
+            className="p-2 rounded-xl text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700"
+          >
+            <Keyboard className="w-4 h-4" />
+          </button>
+
           {/* Theme Toggle */}
           <button
             onClick={onToggleTheme}
@@ -129,6 +152,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         </div>
       </div>
+
+      <ShortcutsModal isOpen={isShortcutsOpen} onClose={() => setIsShortcutsOpen(false)} />
+
 
       {/* Mobile Nav Bar */}
       <div className="flex md:hidden items-center justify-around border-t border-zinc-200/50 dark:border-zinc-800/60 px-2 py-2">

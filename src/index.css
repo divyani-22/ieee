@@ -84,8 +84,13 @@ body {
   perspective: 1000px;
 }
 
+.perspective-1200 {
+  perspective: 1200px;
+}
+
 .transform-style-preserve-3d {
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 
 .backface-hidden {
@@ -95,6 +100,26 @@ body {
 
 .rotate-y-180 {
   transform: rotateY(180deg);
+}
+
+/* Subtle Graph-Paper Grid Pattern */
+.graph-paper-pattern {
+  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, rgba(44, 40, 36, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(44, 40, 36, 0.05) 1px, transparent 1px);
+}
+
+.dark .graph-paper-pattern {
+  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
+
+/* Tabular numerals for stats and scores */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Subtle modern scrollbar */
@@ -115,3 +140,4 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(156, 163, 175, 0.5);
 }
+

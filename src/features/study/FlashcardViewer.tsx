@@ -21,9 +21,10 @@ import {
 import { Card, Deck } from '../../types';
 import { Button } from '../../components/Button';
 import { GlassCard } from '../../components/GlassCard';
-import { CardTypeBadge, DifficultyBadge } from '../../components/Badge';
 import { calculateNextReview, Rating, formatInterval } from '../../services/spacedRepetition';
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
+import { Flashcard } from '../../components/Flashcard';
+
 
 export interface FlashcardViewerProps {
   deck: Deck;
@@ -328,113 +329,18 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
         )}
       </AnimatePresence>
 
-      {/* 3D Flip Card Container */}
-      <div
-        onClick={handleFlip}
-        className="w-full min-h-[380px] sm:min-h-[420px] cursor-pointer perspective-1000 group relative"
-      >
-        <motion.div
-          animate={{ rotateY: isFlipped ? 180 : 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="w-full h-full transform-style-preserve-3d relative rounded-3xl"
-        >
-          {/* FRONT OF CARD */}
-          <div className="absolute inset-0 backface-hidden glass-panel-elevated rounded-3xl p-8 sm:p-10 flex flex-col justify-between border border-white/40 dark:border-zinc-750 shadow-xl group-hover:border-indigo-400/50 transition-colors">
-            {/* Top metadata */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <CardTypeBadge type={currentCard.type} />
-                <DifficultyBadge difficulty={currentCard.difficulty} />
-              </div>
-              
-              {/* Bookmark Toggle Button on Front */}
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleManualToggleBookmark}
-                  title={currentCard.bookmarked ? 'Remove bookmark' : 'Bookmark concept'}
-                  className={`p-2 rounded-xl transition-all flex items-center gap-1 text-xs font-semibold ${
-                    currentCard.bookmarked
-                      ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/40 shadow-sm'
-                      : 'text-zinc-400 hover:text-amber-500 hover:bg-zinc-100 dark:hover:bg-zinc-800'
-                  }`}
-                >
-                  <Bookmark className={`w-4 h-4 ${currentCard.bookmarked ? 'fill-amber-500 text-amber-500' : ''}`} />
-                  <span className="hidden sm:inline">{currentCard.bookmarked ? 'Bookmarked' : 'Bookmark'}</span>
-                </button>
-                <span className="text-xs text-zinc-400 font-medium">Click / Space to Flip</span>
-              </div>
-            </div>
+      {/* Reusable Tactile 3D Flip Card */}
+      <Flashcard
+        card={currentCard}
+        isFlipped={isFlipped}
+        onFlip={handleFlip}
+        onToggleBookmark={() => {
+          const fakeEvent = { stopPropagation: () => {} } as React.MouseEvent;
+          handleManualToggleBookmark(fakeEvent);
+        }}
+        topicTitle={deck.title}
+      />
 
-            {/* Prompt */}
-            <div className="my-auto py-6 text-center space-y-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-indigo-500">
-                Question / Concept
-              </span>
-              <p className="text-lg sm:text-2xl font-bold text-zinc-900 dark:text-white leading-relaxed">
-                {currentCard.question}
-              </p>
-            </div>
-
-            {/* Bottom hint */}
-            <div className="text-center pt-4 border-t border-zinc-100 dark:border-zinc-800/80">
-              <span className="text-xs text-zinc-400 font-medium flex items-center justify-center gap-1.5">
-                <Keyboard className="w-3.5 h-3.5" /> Press <kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-[10px] font-mono">Space</kbd> to reveal answer
-              </span>
-            </div>
-          </div>
-
-          {/* BACK OF CARD */}
-          <div className="absolute inset-0 backface-hidden rotate-y-180 glass-panel-elevated rounded-3xl p-8 sm:p-10 flex flex-col justify-between border border-indigo-500/30 dark:border-indigo-500/30 shadow-2xl bg-gradient-to-b from-white/95 to-indigo-50/20 dark:from-zinc-900/95 dark:to-indigo-950/20">
-            {/* Top metadata */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                  Answer
-                </span>
-                <CardTypeBadge type={currentCard.type} />
-              </div>
-
-              {/* Bookmark Toggle Button on Back */}
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleManualToggleBookmark}
-                  title={currentCard.bookmarked ? 'Remove bookmark' : 'Bookmark concept'}
-                  className={`p-2 rounded-xl transition-all flex items-center gap-1 text-xs font-semibold ${
-                    currentCard.bookmarked
-                      ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/40 shadow-sm'
-                      : 'text-zinc-400 hover:text-amber-500 hover:bg-zinc-100 dark:hover:bg-zinc-800'
-                  }`}
-                >
-                  <Bookmark className={`w-4 h-4 ${currentCard.bookmarked ? 'fill-amber-500 text-amber-500' : ''}`} />
-                  <span className="hidden sm:inline">{currentCard.bookmarked ? 'Bookmarked' : 'Bookmark'}</span>
-                </button>
-                <span className="text-xs text-zinc-400">Reps: {currentCard.repetitions}</span>
-              </div>
-            </div>
-
-            {/* Answer & Context */}
-            <div className="my-auto py-6 space-y-4 text-center">
-              <p className="text-xl sm:text-2xl font-extrabold text-zinc-900 dark:text-white leading-relaxed">
-                {currentCard.answer}
-              </p>
-
-              {currentCard.explanation && (
-                <div className="p-3 rounded-xl bg-zinc-100/70 dark:bg-zinc-800/70 text-xs text-zinc-600 dark:text-zinc-300 max-w-lg mx-auto text-left leading-relaxed">
-                  <span className="font-bold text-indigo-500">Context: </span>
-                  {currentCard.explanation}
-                </div>
-              )}
-            </div>
-
-            {/* Bottom cue */}
-            <div className="text-center pt-2">
-              <span className="text-xs text-zinc-400">Indicate whether you remembered this concept</span>
-            </div>
-          </div>
-        </motion.div>
-      </div>
 
       {/* Answer Evaluation Controls */}
       <AnimatePresence>
