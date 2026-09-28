@@ -6,7 +6,9 @@ import { generateCardsSmartOrFallback } from './services/webllm';
 import { generateCardsFromText } from './services/nlp';
 import { SAMPLE_NEUROSCIENCE_TEXT } from './samples/sampleDecks';
 import { useTheme } from './hooks/useTheme';
+import { useAuth } from './hooks/useAuth';
 import { Navbar } from './components/Navbar';
+import { AuthModal } from './components/auth/AuthModal';
 import { PastelBentoDashboard } from './features/dashboard/PastelBentoDashboard';
 import { UploadZone } from './features/upload/UploadZone';
 import { DeckLibrary } from './features/library/DeckLibrary';
@@ -20,6 +22,8 @@ import { Target, Layers } from 'lucide-react';
 
 export const App: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
+  const { user, loginWithGoogle, loginWithPhone, logout, updateName } = useAuth();
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [currentView, setCurrentView] = useState<ViewMode>('home');
   const [activeDeckId, setActiveDeckId] = useState<number | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -301,6 +305,10 @@ export const App: React.FC = () => {
           dueCardsCount={totalDueCardsCount}
           bookmarkedCount={bookmarkedCards.length}
           totalCardsCount={allCards.length}
+          user={user}
+          onOpenAuth={() => setIsAuthOpen(true)}
+          onLogout={logout}
+          onUpdateName={updateName}
           onOpenUpload={() => {
             setIsReviewingBookmarks(false);
             setCurrentView('home');
@@ -321,6 +329,7 @@ export const App: React.FC = () => {
               allCards={allCards}
               bookmarkedCount={bookmarkedCards.length}
               dueCardsCount={totalDueCardsCount}
+              userName={user?.name || 'Alex'}
               onOpenDeck={(deckId) => {
                 setActiveDeckId(deckId);
                 setCurrentView('deck-detail');
@@ -453,6 +462,22 @@ export const App: React.FC = () => {
           />
         )}
       </main>
+
+      {/* Authentication Modal */}
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        onLoginGoogle={(name, email) => {
+          const u = loginWithGoogle(name, email);
+          showToast(`Welcome, ${u.name}!`);
+          return u;
+        }}
+        onLoginPhone={(phone, name) => {
+          const u = loginWithPhone(phone, name);
+          showToast(`Welcome, ${u.name}!`);
+          return u;
+        }}
+      />
 
       {/* Floating Toast Notification */}
       {toastMessage && (

@@ -14,6 +14,7 @@ export interface PastelBentoDashboardProps {
   allCards: FlashcardItem[];
   bookmarkedCount: number;
   dueCardsCount: number;
+  userName?: string;
   onOpenDeck: (deckId: number) => void;
   onStartQuiz: () => void;
   onStartFlashcards: () => void;
@@ -26,6 +27,7 @@ export const PastelBentoDashboard: React.FC<PastelBentoDashboardProps> = ({
   allCards,
   bookmarkedCount,
   dueCardsCount,
+  userName = 'Alex',
   onOpenDeck,
   onStartQuiz,
   onStartFlashcards,
@@ -52,7 +54,7 @@ export const PastelBentoDashboard: React.FC<PastelBentoDashboardProps> = ({
       {/* 1. SIGNATURE PAGE HEADER */}
       {/* =================================================================== */}
       <PageHeader
-        userName="Alex"
+        userName={userName}
         progressPercent={Math.min(100, Math.round((masteredCards / Math.max(1, totalCards)) * 100))}
         titleLine1="Your Progress"
         titleLine2="Today"

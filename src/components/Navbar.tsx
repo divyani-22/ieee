@@ -14,7 +14,7 @@ import {
   HelpCircle,
   Bell
 } from 'lucide-react';
-import { ViewMode } from '../types';
+import { ViewMode, UserProfile } from '../types';
 import { ShortcutsModal } from './ShortcutsModal';
 import { ProfileModal } from './ProfileModal';
 
@@ -27,6 +27,10 @@ export interface NavbarProps {
   bookmarkedCount?: number;
   totalCardsCount?: number;
   onOpenUpload?: () => void;
+  user?: UserProfile | null;
+  onOpenAuth?: () => void;
+  onLogout?: () => void;
+  onUpdateName?: (name: string) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -37,6 +41,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   dueCardsCount,
   bookmarkedCount = 0,
   totalCardsCount = 0,
+  user = null,
+  onOpenAuth,
+  onLogout = () => {},
+  onUpdateName = () => {},
 }) => {
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -144,7 +152,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </nav>
 
-          {/* Right Action Icons: Keyboard Shortcuts */}
+          {/* Right Action Icons: Keyboard Shortcuts & Sign In / Account */}
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => setIsShortcutsOpen(true)}
@@ -154,6 +162,25 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <Keyboard className="w-4 h-4" />
             </button>
+
+            {user ? (
+              <button
+                onClick={() => setIsProfileOpen(true)}
+                className="px-4 py-2 rounded-full bg-white shadow-soft text-xs font-black text-[#16161D] flex items-center gap-2 hover:bg-slate-50 transition-all border border-white"
+                title="Account Settings"
+              >
+                <span className="w-2 h-2 rounded-full bg-[#3A7560]" />
+                <span className="max-w-[120px] truncate">{user.name}</span>
+              </button>
+            ) : (
+              <button
+                onClick={onOpenAuth}
+                className="px-5 py-2.5 rounded-full bg-[#22222B] text-white text-xs font-black shadow-soft hover:bg-black transition-all hover:scale-105 active:scale-95 flex items-center gap-1.5"
+              >
+                <User className="w-3.5 h-3.5" />
+                <span>Sign In</span>
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -233,6 +260,10 @@ export const Navbar: React.FC<NavbarProps> = ({
       <ProfileModal
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
+        user={user}
+        onLogout={onLogout}
+        onOpenAuth={onOpenAuth || (() => {})}
+        onUpdateName={onUpdateName}
         theme={theme}
         onToggleTheme={onToggleTheme}
         totalCards={totalCardsCount}

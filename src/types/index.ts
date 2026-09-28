@@ -80,3 +80,12 @@ export interface GenerationConfig {
 export type QuizDifficultyLevel = 'simple' | 'intermediate' | 'hard';
 
 export type ViewMode = 'home' | 'decks' | 'deck-detail' | 'study' | 'quiz' | 'insights' | 'bookmarks';
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  provider: 'google' | 'phone';
+  createdAt: string;
+}

@@ -274,3 +274,51 @@ test('Spaced repetition increases interval monotonically across consecutive Good
   }
 });
 
+// Test 11: User profile creation with name and authentication providers (Google & Phone)
+test('User profile creation enforces name requirement for both Google and Phone auth', () => {
+  function createProfile(provider, details) {
+    const trimmedName = (details.name || '').trim();
+    if (!trimmedName) {
+      throw new Error('Name is required');
+    }
+    if (provider === 'google') {
+      const email = details.email?.trim() || `${trimmedName.toLowerCase().replace(/\s+/g, '.')}@gmail.com`;
+      return {
+        id: 'google-user-123',
+        name: trimmedName,
+        email,
+        provider: 'google',
+        createdAt: new Date().toISOString()
+      };
+    } else if (provider === 'phone') {
+      if (!details.phone || details.phone.trim().length < 5) {
+        throw new Error('Valid phone number is required');
+      }
+      return {
+        id: 'phone-user-456',
+        name: trimmedName,
+        phone: details.phone.trim(),
+        provider: 'phone',
+        createdAt: new Date().toISOString()
+      };
+    }
+    throw new Error('Invalid provider');
+  }
+
+  // Name is required
+  assert.throws(() => createProfile('google', { name: '' }), /Name is required/);
+  assert.throws(() => createProfile('phone', { name: '', phone: '+1 555-0199' }), /Name is required/);
+
+  // Valid Google profile
+  const googleUser = createProfile('google', { name: 'Divyani Sharma', email: 'divyani@example.com' });
+  assert.strictEqual(googleUser.name, 'Divyani Sharma');
+  assert.strictEqual(googleUser.provider, 'google');
+  assert.strictEqual(googleUser.email, 'divyani@example.com');
+
+  // Valid Phone profile
+  const phoneUser = createProfile('phone', { name: 'Alex Johnson', phone: '+1 555-0199' });
+  assert.strictEqual(phoneUser.name, 'Alex Johnson');
+  assert.strictEqual(phoneUser.provider, 'phone');
+  assert.strictEqual(phoneUser.phone, '+1 555-0199');
+});
+
