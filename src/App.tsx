@@ -131,8 +131,9 @@ export const App: React.FC = () => {
       );
 
       setActiveDeckId(deckId);
-      setCurrentView('deck-detail');
-      showToast(`Successfully created "${title}" with ${generatedCards.length} cards!`);
+      setIsReviewingBookmarks(false);
+      setCurrentView('study');
+      showToast(`Generated "${title}" with ${generatedCards.length} flipable flashcards!`);
     } catch (err: any) {
       console.error('Generation error:', err);
       showToast(`Generation failed: ${err.message || 'Unknown error'}`);
@@ -201,8 +202,9 @@ export const App: React.FC = () => {
   ) => {
     const deckId = await createDeckWithCards(deckData, cardsData);
     setActiveDeckId(deckId);
-    setCurrentView('deck-detail');
-    showToast(`Imported "${deckData.title}" with ${cardsData.length} cards!`);
+    setIsReviewingBookmarks(false);
+    setCurrentView('study');
+    showToast(`Imported "${deckData.title}" with ${cardsData.length} flipable flashcards!`);
   };
 
   const handleFinishFlashcardSession = async (stats: {

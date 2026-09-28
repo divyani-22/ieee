@@ -12,13 +12,20 @@ import {
   Filter,
   CheckCircle,
   Calendar,
-  Layers
+  Layers,
+  ChevronLeft,
+  ChevronRight,
+  RotateCw,
+  Sparkles,
+  LayoutGrid,
+  CreditCard
 } from 'lucide-react';
 import { Deck, Card, CardType, CardDifficulty } from '../../types';
 import { GlassCard } from '../../components/GlassCard';
 import { Button } from '../../components/Button';
 import { CardTypeBadge, DifficultyBadge } from '../../components/Badge';
 import { Modal } from '../../components/Modal';
+import { Flashcard } from '../../components/Flashcard';
 import { exportDeckToAnkiCsv, exportDeckToJson, downloadFile } from '../../services/ankiExport';
 import { formatInterval } from '../../services/spacedRepetition';
 
@@ -43,6 +50,9 @@ export const DeckDetail: React.FC<DeckDetailProps> = ({
   onDeleteCard,
   onAddCard,
 }) => {
+  const [deckViewMode, setDeckViewMode] = useState<'flip' | 'list'>('flip');
+  const [activeFlipIndex, setActiveFlipIndex] = useState<number>(0);
+  const [isFlipped, setIsFlipped] = useState<boolean>(false);
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [editingCard, setEditingCard] = useState<Card | null>(null);
   const [isNewCardModalOpen, setIsNewCardModalOpen] = useState(false);
@@ -192,39 +202,142 @@ export const DeckDetail: React.FC<DeckDetailProps> = ({
         </div>
       </GlassCard>
 
-      {/* Filter Tabs */}
+      {/* View Switcher & Filter Tabs */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
-          <span className="text-xs font-semibold text-zinc-400 flex items-center gap-1 mr-1">
-            <Filter className="w-3.5 h-3.5" /> Filter:
-          </span>
-          {[
-            { id: 'all', label: `All (${cards.length})` },
-            { id: 'definition', label: 'Definitions' },
-            { id: 'cloze', label: 'Cloze' },
-            { id: 'mcq', label: 'MCQs' },
-            { id: 'true-false', label: 'True/False' },
-            { id: 'starred', label: `★ Starred (${cards.filter(c => c.starred).length})` },
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setTypeFilter(tab.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border ${
-                typeFilter === tab.id
-                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
-                  : 'bg-zinc-100/80 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-400 border-zinc-200/60 dark:border-zinc-700/60 hover:bg-zinc-200 dark:hover:bg-zinc-700'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-zinc-100/90 dark:bg-zinc-800/80 border border-zinc-200/60 dark:border-zinc-700/60">
+          <button
+            onClick={() => {
+              setDeckViewMode('flip');
+              setIsFlipped(false);
+            }}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+              deckViewMode === 'flip'
+                ? 'bg-indigo-600 text-white shadow-sm'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+            }`}
+          >
+            <CreditCard className="w-3.5 h-3.5" />
+            3D Flipcards View
+          </button>
+          <button
+            onClick={() => setDeckViewMode('list')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+              deckViewMode === 'list'
+                ? 'bg-indigo-600 text-white shadow-sm'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+            }`}
+          >
+            <LayoutGrid className="w-3.5 h-3.5" />
+            Card List ({cards.length})
+          </button>
         </div>
-        <span className="text-xs text-zinc-400 font-medium">
-          Showing {filteredCards.length} cards
-        </span>
+
+        {deckViewMode === 'list' && (
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+            <span className="text-xs font-semibold text-zinc-400 flex items-center gap-1 mr-1">
+              <Filter className="w-3.5 h-3.5" /> Filter:
+            </span>
+            {[
+              { id: 'all', label: `All (${cards.length})` },
+              { id: 'definition', label: 'Definitions' },
+              { id: 'cloze', label: 'Cloze' },
+              { id: 'mcq', label: 'MCQs' },
+              { id: 'true-false', label: 'True/False' },
+              { id: 'starred', label: `★ Starred (${cards.filter(c => c.starred).length})` },
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setTypeFilter(tab.id)}
+                className={`px-2.5 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border ${
+                  typeFilter === tab.id
+                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                    : 'bg-zinc-100/80 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-400 border-zinc-200/60 dark:border-zinc-700/60 hover:bg-zinc-200 dark:hover:bg-zinc-700'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Cards List */}
+      {/* Mode 1: Interactive 3D Flipcard Carousel */}
+      {deckViewMode === 'flip' && (
+        <div className="space-y-4 pt-2">
+          {cards.length === 0 ? (
+            <div className="text-center py-12 border border-dashed rounded-2xl border-zinc-300 dark:border-zinc-800 text-zinc-400 text-sm">
+              No flashcards in this deck yet.
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <Flashcard
+                card={cards[activeFlipIndex % cards.length]}
+                isFlipped={isFlipped}
+                onFlip={() => setIsFlipped(prev => !prev)}
+                onToggleBookmark={async (c, nextState) => {
+                  await onUpdateCard({
+                    ...c,
+                    bookmarked: nextState,
+                    bookmarkedAt: nextState ? new Date().toISOString() : undefined,
+                  });
+                }}
+                topicTitle={deck.title}
+              />
+
+              {/* Flipcard Navigation Controls */}
+              <div className="flex items-center justify-between max-w-2xl mx-auto px-2">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={activeFlipIndex === 0}
+                  onClick={() => {
+                    setActiveFlipIndex(prev => Math.max(0, prev - 1));
+                    setIsFlipped(false);
+                  }}
+                  className="text-xs font-bold"
+                >
+                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  Previous Card
+                </Button>
+
+                <div className="text-xs font-bold text-zinc-600 dark:text-zinc-400">
+                  Card {(activeFlipIndex % cards.length) + 1} of {cards.length}
+                </div>
+
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={activeFlipIndex >= cards.length - 1}
+                  onClick={() => {
+                    setActiveFlipIndex(prev => Math.min(cards.length - 1, prev + 1));
+                    setIsFlipped(false);
+                  }}
+                  className="text-xs font-bold"
+                >
+                  Next Card
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+
+              {/* Study Mode Call to action */}
+              <div className="text-center pt-2">
+                <Button
+                  size="lg"
+                  variant="primary"
+                  onClick={onStudy}
+                  className="shadow-lg shadow-indigo-500/25 px-8 font-bold"
+                >
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  Launch Full Spaced Repetition Study Session
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Mode 2: Detailed Cards Management List */}
+      {deckViewMode === 'list' && (
       <div className="space-y-3">
         {filteredCards.length === 0 ? (
           <div className="text-center py-12 border border-dashed rounded-2xl border-zinc-300 dark:border-zinc-800 text-zinc-400 text-sm">
@@ -311,6 +424,7 @@ export const DeckDetail: React.FC<DeckDetailProps> = ({
           ))
         )}
       </div>
+      )}
 
       {/* Edit Card Modal */}
       {editingCard && (

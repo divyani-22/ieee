@@ -143,13 +143,29 @@ export const Flashcard: React.FC<FlashcardProps> = ({
           </div>
 
           {/* Center: Question / Concept Statement */}
-          <div className="my-auto py-6 text-center space-y-3 max-w-[65ch] mx-auto">
+          <div className="my-auto py-4 text-center space-y-3 max-w-[65ch] mx-auto overflow-y-auto max-h-[260px] px-1">
             <span className="text-[11px] font-black tracking-widest uppercase text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/70 px-2.5 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800 inline-block">
-              Question / Concept
+              {card.type === 'mcq' ? 'Multiple Choice Question' : card.type === 'true-false' ? 'True / False Prompt' : 'Question / Concept'}
             </span>
             <p className={`${questionFontClass} leading-snug tracking-tight text-stone-900 dark:text-stone-50 whitespace-pre-line`}>
               {card.question}
             </p>
+
+            {card.options && card.options.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-left pt-1 max-w-lg mx-auto">
+                {card.options.map((opt, i) => (
+                  <div
+                    key={i}
+                    className="px-3 py-1.5 rounded-xl bg-white/80 dark:bg-stone-850/80 border border-stone-300/80 dark:border-stone-700/80 text-xs font-semibold text-stone-800 dark:text-stone-200 flex items-center gap-2 shadow-sm"
+                  >
+                    <span className="w-5 h-5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-800 flex items-center justify-center text-[10px] font-bold shrink-0">
+                      {String.fromCharCode(65 + i)}
+                    </span>
+                    <span className="truncate">{opt}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Bottom Tap Indicator */}
