@@ -274,6 +274,8 @@ export const DeckDetail: React.FC<DeckDetailProps> = ({
                 card={cards[activeFlipIndex % cards.length]}
                 isFlipped={isFlipped}
                 onFlip={() => setIsFlipped(prev => !prev)}
+                cardIndex={activeFlipIndex}
+                totalCards={cards.length}
                 onToggleBookmark={async (c, nextState) => {
                   await onUpdateCard({
                     ...c,

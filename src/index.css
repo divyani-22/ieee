@@ -45,11 +45,67 @@
 body {
   font-feature-settings: "rlig" 1, "calt" 1, "cv11" 1;
   font-family: 'Plus Jakarta Sans', 'Poppins', system-ui, -apple-system, sans-serif;
-  background: linear-gradient(135deg, #F3F1F8 0%, #E9E1F5 100%);
-  background-attachment: fixed;
+  background-color: #F3F1F8;
   color: #16161D;
   overflow-x: hidden;
   min-height: 100vh;
+}
+
+.dark body {
+  background-color: #17151F;
+}
+
+/* Light grid texture background (entire website) */
+.ambient-grid-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-color: #F3F1F8;
+  background-image:
+    linear-gradient(to right, rgba(140, 120, 190, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(140, 120, 190, 0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 100%);
+}
+
+.dark .ambient-grid-canvas {
+  background-color: #17151F;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
+
+/* Soft corner glows so the background never looks flat */
+.ambient-glow-lavender {
+  position: fixed;
+  top: -12vw;
+  right: -12vw;
+  width: 55vw;
+  height: 55vw;
+  max-width: 650px;
+  max-height: 650px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(217, 205, 238, 0.55) 0%, rgba(217, 205, 238, 0) 70%);
+  filter: blur(50px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambient-glow-mint {
+  position: fixed;
+  bottom: -12vw;
+  left: -12vw;
+  width: 55vw;
+  height: 55vw;
+  max-width: 650px;
+  max-height: 650px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(214, 234, 225, 0.55) 0%, rgba(214, 234, 225, 0) 70%);
+  filter: blur(50px);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Glassy pillowy card edges */

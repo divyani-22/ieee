@@ -15,23 +15,39 @@ export default {
         pastelLavenderBg: '#E9E1F5',
         mint: {
           DEFAULT: '#D6EAE1',
+          back: '#C2E2D4',
           accent: '#A8D5C2',
           dark: '#589A80',
         },
         lavender: {
           DEFAULT: '#D9CDEE',
+          back: '#C7B4E5',
           accent: '#B9A6E3',
           dark: '#7D64B5',
         },
         butterYellow: {
           DEFAULT: '#FCE6A6',
+          back: '#F6D884',
           accent: '#E5CB82',
           dark: '#B89431',
         },
         periwinkle: {
           DEFAULT: '#CFD3F0',
+          back: '#B9BFEC',
           accent: '#B2B9E4',
           dark: '#5660A6',
+        },
+        peach: {
+          DEFAULT: '#F9D9CF',
+          back: '#F3C2B4',
+          accent: '#F2B8A8',
+          dark: '#B0543C',
+        },
+        pink: {
+          DEFAULT: '#F5D3E3',
+          back: '#EDB9D1',
+          accent: '#E8ADC5',
+          dark: '#A64875',
         },
         skyBlue: {
           DEFAULT: '#6FA8E8',

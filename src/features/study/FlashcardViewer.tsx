@@ -287,34 +287,52 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
   const formattedIndex = String(currentIndex + 1).padStart(2, '0');
   const formattedTotal = String(queue.length).padStart(2, '0');
 
+  const handlePrevCard = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
+      setIsFlipped(false);
+    }
+  };
+
+  const handleNextCard = () => {
+    if (currentIndex < queue.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+      setIsFlipped(false);
+    }
+  };
+
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-fade-in pb-20 select-none">
-      {/* Top Bar with Progress */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-navy/60 dark:text-lightBlue-200 hover:text-navy dark:hover:text-white transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back
-        </button>
+      {/* Top Bar with Thin Lavender Progress Bar */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#6B6B7B] hover:text-[#16161D] transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Deck
+          </button>
 
-        {/* Progress & Deck info */}
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-black text-navy dark:text-white">
-            {formattedIndex} <span className="text-navy/40 dark:text-lightBlue-200 font-semibold">/ {formattedTotal}</span>
-          </span>
-          <div className="w-28 h-2.5 bg-lightBlue-100 dark:bg-navy-800 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-coral rounded-full transition-all duration-300"
-              style={{ width: `${progressPercent}%` }}
-            />
+          {/* Progress & Deck info */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-black text-[#16161D]">
+              {formattedIndex} <span className="text-[#6B6B7B] font-semibold">/ {formattedTotal}</span>
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-xs font-bold text-[#16161D] px-3.5 py-1.5 rounded-full bg-white shadow-soft">
+            <Flame className="w-4 h-4 text-[#F58D87] fill-[#F58D87]" />
+            <span>Active Streak</span>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 text-xs font-bold text-navy dark:text-white px-3 py-1 rounded-full bg-white dark:bg-navy-800 border border-lightBlue-100 dark:border-navy-700 shadow-soft">
-          <Flame className="w-4 h-4 text-coral fill-coral" />
-          <span>Active Streak</span>
+        {/* Thin rounded progress bar in lavender #B9A6E3 */}
+        <div className="w-full h-2 bg-white/70 rounded-full overflow-hidden shadow-xs">
+          <div
+            className="h-full bg-[#B9A6E3] rounded-full transition-all duration-300"
+            style={{ width: `${progressPercent}%` }}
+          />
         </div>
       </div>
 
@@ -325,15 +343,15 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            className="p-3.5 rounded-2xl bg-coral-50 dark:bg-navy-800 border border-coral-200 text-coral-700 dark:text-coral-300 text-xs font-bold flex items-center justify-between gap-2 shadow-soft"
+            className="p-3.5 rounded-2xl bg-white shadow-soft border border-[#FCE6A6] text-[#16161D] text-xs font-bold flex items-center justify-between gap-2"
           >
             <div className="flex items-center gap-2">
-              <Bookmark className="w-4 h-4 text-coral fill-coral shrink-0" />
+              <Bookmark className="w-4 h-4 text-[#16161D] fill-[#16161D] shrink-0" />
               <span>{bookmarkNotification}</span>
             </div>
             <button
               onClick={() => setBookmarkNotification(null)}
-              className="text-coral/60 hover:text-coral p-1"
+              className="text-[#6B6B7B] hover:text-[#16161D] p-1"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -341,17 +359,48 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Reusable Tactile 3D Flip Card */}
+      {/* Reusable Tactile 3D Flip Card with Rotating Pastel Color */}
       <Flashcard
         card={currentCard}
         isFlipped={isFlipped}
         onFlip={handleFlip}
+        cardIndex={currentIndex}
+        totalCards={queue.length}
         onToggleBookmark={() => {
           const fakeEvent = { stopPropagation: () => {} } as React.MouseEvent;
           handleManualToggleBookmark(fakeEvent);
         }}
         topicTitle={deck.title}
       />
+
+      {/* Circular Arrow Buttons for Previous / Next Navigation with a white ring, lifting on hover */}
+      <div className="flex items-center justify-between px-2 pt-1">
+        <button
+          type="button"
+          onClick={handlePrevCard}
+          disabled={currentIndex === 0}
+          className="w-12 h-12 rounded-full bg-white ring-4 ring-white/60 shadow-pillowy flex items-center justify-center text-[#16161D] hover:-translate-y-1 hover:shadow-pillowy-hover transition-all disabled:opacity-40 disabled:hover:translate-y-0 active:scale-95"
+          title="Previous Card (Left Arrow)"
+          aria-label="Previous Flashcard"
+        >
+          <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+        </button>
+
+        <span className="text-xs font-bold text-[#6B6B7B]">
+          Card {formattedIndex} of {formattedTotal}
+        </span>
+
+        <button
+          type="button"
+          onClick={handleNextCard}
+          disabled={currentIndex >= queue.length - 1}
+          className="w-12 h-12 rounded-full bg-white ring-4 ring-white/60 shadow-pillowy flex items-center justify-center text-[#16161D] hover:-translate-y-1 hover:shadow-pillowy-hover transition-all disabled:opacity-40 disabled:hover:translate-y-0 active:scale-95"
+          title="Next Card (Right Arrow)"
+          aria-label="Next Flashcard"
+        >
+          <ChevronRight className="w-5 h-5 stroke-[2.5]" />
+        </button>
+      </div>
 
       {/* Interaction Controls below the card */}
       <div className="space-y-4">

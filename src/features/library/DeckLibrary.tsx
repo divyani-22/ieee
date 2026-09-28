@@ -20,6 +20,8 @@ import { Button } from '../../components/Button';
 import { EmptyState } from '../../components/EmptyState';
 import { exportDeckToAnkiCsv, exportDeckToJson, downloadFile, parseImportedDeck } from '../../services/ankiExport';
 import { db } from '../../db';
+import { getPastelByIndex, getPastelConfig } from '../../utils/pastelColors';
+import { Star, ArrowRight } from 'lucide-react';
 
 export interface DeckLibraryProps {
   decks: Deck[];
@@ -87,20 +89,23 @@ export const DeckLibrary: React.FC<DeckLibraryProps> = ({
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-fade-in pb-20">
+    <div className="max-w-6xl mx-auto space-y-8 animate-fade-in pb-20 select-none">
       {/* Header with Search and Import Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pt-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white flex items-center gap-3">
-            <Layers className="w-7 h-7 text-indigo-500" />
-            Deck Library
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D6EAE1] text-xs font-bold text-[#16161D] mb-2 shadow-xs">
+            <Layers className="w-3.5 h-3.5 text-[#16161D]" />
+            <span>Interactive Library</span>
+          </div>
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-[#16161D] leading-[1.08] tracking-tight">
+            Learning Schedule<br />Deck Library
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Organize, study with spaced repetition, or take customized 10-question quizzes.
+          <p className="text-sm font-semibold text-[#6B6B7B] mt-1.5">
+            Organize study decks, review with spaced repetition, or take customized quizzes.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <input
             ref={importInputRef}
             type="file"
@@ -108,44 +113,40 @@ export const DeckLibrary: React.FC<DeckLibraryProps> = ({
             className="hidden"
             onChange={handleFileImport}
           />
-          <Button
-            variant="secondary"
-            size="sm"
+          <button
             onClick={() => importInputRef.current?.click()}
-            className="text-xs font-semibold"
+            className="px-4 py-2.5 rounded-full bg-white text-[#16161D] shadow-soft text-xs font-bold hover:bg-slate-50 transition-all flex items-center gap-1.5"
           >
-            <Upload className="w-3.5 h-3.5 mr-1" />
+            <Upload className="w-3.5 h-3.5" />
             Import (Anki/JSON)
-          </Button>
+          </button>
 
-          <Button
-            variant="primary"
-            size="sm"
+          <button
             onClick={onOpenUpload}
-            className="text-xs font-semibold"
+            className="px-5 py-2.5 rounded-full bg-[#22222B] text-white shadow-soft text-xs font-bold hover:bg-black transition-all flex items-center gap-1.5 hover:scale-105 active:scale-95"
           >
-            <Plus className="w-3.5 h-3.5 mr-1" />
+            <Plus className="w-3.5 h-3.5" />
             New Deck
-          </Button>
+          </button>
         </div>
       </div>
 
       {/* Search Bar */}
       <div className="relative">
-        <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+        <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#6B6B7B]" />
         <input
           type="text"
           placeholder="Search decks by title or topic..."
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-zinc-100/60 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-700/60 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full pl-11 pr-4 py-3 rounded-full bg-white text-[#16161D] placeholder-[#6B6B7B] shadow-soft text-sm font-semibold border-none focus:outline-none focus:ring-4 focus:ring-[#B9A6E3]/30"
         />
       </div>
 
       {/* Deck Grid */}
       {filteredDecks.length === 0 ? (
         <EmptyState
-          icon={<Layers className="w-8 h-8" />}
+          icon={<Layers className="w-8 h-8 text-[#16161D]" />}
           title={searchQuery ? 'No decks match your search' : 'No decks yet'}
           description={
             searchQuery
@@ -157,107 +158,141 @@ export const DeckLibrary: React.FC<DeckLibraryProps> = ({
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredDecks.map(deck => {
+          {filteredDecks.map((deck, idx) => {
             const cards = cardsByDeckId[deck.id!] || [];
             const dueCards = cards.filter(c => c.dueDate <= todayStr);
             const masteredCards = cards.filter(c => c.repetitions >= 3);
             const masteryRate = cards.length > 0 ? Math.round((masteredCards.length / cards.length) * 100) : 0;
 
+            const pastelKey = getPastelByIndex(idx);
+            const pastel = getPastelConfig(pastelKey);
+
             return (
-              <GlassCard
+              <div
                 key={deck.id}
-                interactive
                 onClick={() => onSelectDeck(deck.id!)}
-                className="p-6 flex flex-col justify-between group h-full space-y-4 border border-zinc-200/80 dark:border-zinc-800"
+                className="card-pillowy relative p-6 sm:p-7 flex flex-col justify-between overflow-hidden cursor-pointer group shadow-pillowy transition-all duration-300"
+                style={{
+                  backgroundColor: pastel.front,
+                  color: '#16161D',
+                }}
               >
-                <div className="space-y-3">
-                  {/* Top Bar with badge and action dropdown */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-800/50">
-                      {deck.sourceType}
-                    </span>
+                {/* Low-opacity open-book watermark */}
+                <div className="absolute right-2 bottom-2 pointer-events-none opacity-[0.08] select-none text-[#16161D]">
+                  <BookOpen className="w-36 h-36" strokeWidth={1} />
+                </div>
 
+                {/* Decorative Sparkle Stars */}
+                <svg className="absolute top-8 right-20 w-4 h-4 text-white/70 pointer-events-none" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+                </svg>
+                <svg className="absolute bottom-12 right-28 w-3 h-3 text-white/60 pointer-events-none" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+                </svg>
+
+                {/* Top Row: White circular icon chip + White pill status chip */}
+                <div className="flex items-center justify-between relative z-10">
+                  <div className="w-11 h-11 rounded-full bg-white shadow-soft flex items-center justify-center text-[#16161D] group-hover:scale-105 transition-transform">
+                    <BookOpen className="w-5 h-5 text-[#16161D]" />
+                  </div>
+
+                  <div className="px-3 py-1 rounded-full bg-white shadow-soft flex items-center gap-1 text-xs font-black text-[#16161D]">
                     {dueCards.length > 0 ? (
-                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-                        {dueCards.length} due today
-                      </span>
+                      <>
+                        <span className="w-2 h-2 rounded-full bg-[#F58D87] animate-pulse" />
+                        <span>{dueCards.length} Due</span>
+                      </>
                     ) : (
-                      <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                        <CheckCircle className="w-3 h-3" /> Up to date
-                      </span>
+                      <>
+                        <Star className="w-3.5 h-3.5 fill-[#16161D] text-[#16161D]" />
+                        <span>4.8</span>
+                      </>
                     )}
-                  </div>
-
-                  {/* Title & Description */}
-                  <div>
-                    <h3 className="font-bold text-lg text-zinc-900 dark:text-zinc-50 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-1">
-                      {deck.title}
-                    </h3>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-2 leading-relaxed">
-                      {deck.description || 'Interactive lecture cards & quizzes'}
-                    </p>
-                  </div>
-
-                  {/* Stats Counter */}
-                  <div className="grid grid-cols-3 gap-2 py-2 border-y border-zinc-100 dark:border-zinc-800/80 text-center">
-                    <div>
-                      <div className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
-                        {cards.length}
-                      </div>
-                      <div className="text-[10px] text-zinc-400">Cards</div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
-                        {masteryRate}%
-                      </div>
-                      <div className="text-[10px] text-zinc-400">Mastered</div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
-                        {cards.filter(c => c.starred).length}
-                      </div>
-                      <div className="text-[10px] text-zinc-400">Starred</div>
-                    </div>
                   </div>
                 </div>
 
-                {/* Footer Buttons */}
-                <div className="space-y-2 pt-2">
+                {/* Middle: Category + Bold 2-line title */}
+                <div className="my-5 relative z-10 space-y-1">
+                  <span className="text-xs font-bold text-[#6B6B7B] tracking-wide block uppercase">
+                    {deck.tags?.[0] || deck.sourceType}
+                  </span>
+                  <h3 className="text-lg sm:text-xl font-bold text-[#16161D] leading-snug line-clamp-2">
+                    {deck.title}
+                  </h3>
+                  <span className="text-[11px] font-semibold text-[#6B6B7B] block pt-0.5">
+                    {cards.length} interactive cards • {masteryRate}% mastered
+                  </span>
+                </div>
+
+                {/* Bottom Row: Avatar stack + Circular Arrow Button */}
+                <div className="flex items-center justify-between pt-2 pb-4 relative z-10 border-b border-black/5">
+                  {/* Overlapping Avatar Stack with "+5" bubble */}
+                  <div className="flex items-center -space-x-2">
+                    <div className="w-7 h-7 rounded-full ring-2 ring-white overflow-hidden bg-sky-100">
+                      <img
+                        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80"
+                        alt="Student"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="w-7 h-7 rounded-full ring-2 ring-white overflow-hidden bg-emerald-100">
+                      <img
+                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80"
+                        alt="Student"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="w-7 h-7 rounded-full ring-2 ring-white overflow-hidden bg-amber-100">
+                      <img
+                        src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80"
+                        alt="Student"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="h-7 px-2 rounded-full bg-white ring-2 ring-white text-[10px] font-extrabold text-[#16161D] flex items-center justify-center shadow-xs">
+                      +5
+                    </div>
+                  </div>
+
+                  {/* Circular Arrow Button with white ring */}
+                  <div className="w-11 h-11 rounded-full bg-white ring-4 ring-white/60 shadow-soft flex items-center justify-center text-[#16161D] transition-all group-hover:scale-110 group-hover:bg-[#16161D] group-hover:text-white">
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                  </div>
+                </div>
+
+                {/* Action Buttons: Flashcards & Quiz Mode */}
+                <div className="space-y-2 pt-3 relative z-10">
                   <div className="grid grid-cols-2 gap-2">
-                    <Button
-                      size="sm"
-                      variant="primary"
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         onStudyDeck(deck.id!);
                       }}
-                      className="text-xs font-semibold"
+                      className="py-2.5 px-3 rounded-full bg-white text-[#16161D] text-xs font-extrabold shadow-soft hover:bg-slate-50 transition-all flex items-center justify-center gap-1.5"
                     >
-                      <BookOpen className="w-3.5 h-3.5 mr-1" />
+                      <BookOpen className="w-3.5 h-3.5" />
                       Flashcards
-                    </Button>
+                    </button>
 
-                    <Button
-                      size="sm"
-                      variant="secondary"
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         onQuizDeck(deck.id!);
                       }}
-                      className="text-xs font-semibold"
+                      className="py-2.5 px-3 rounded-full bg-white text-[#16161D] text-xs font-extrabold shadow-soft hover:bg-slate-50 transition-all flex items-center justify-center gap-1.5"
                     >
-                      <HelpCircle className="w-3.5 h-3.5 mr-1" />
+                      <HelpCircle className="w-3.5 h-3.5" />
                       Quiz Mode
-                    </Button>
+                    </button>
                   </div>
 
-                  {/* Quick Export & Delete Bar */}
-                  <div className="flex items-center justify-between text-[11px] text-zinc-400 pt-1">
+                  {/* Subtle Export & Delete Bar */}
+                  <div className="flex items-center justify-between text-[11px] font-bold text-[#6B6B7B] pt-1">
                     <div className="flex items-center gap-2">
                       <button
                         title="Export to Anki CSV"
                         onClick={(e) => handleExportCsv(deck, e)}
-                        className="hover:text-indigo-500 transition-colors flex items-center gap-1"
+                        className="hover:text-[#16161D] transition-colors flex items-center gap-1"
                       >
                         <FileSpreadsheet className="w-3 h-3" /> Anki
                       </button>
@@ -265,7 +300,7 @@ export const DeckLibrary: React.FC<DeckLibraryProps> = ({
                       <button
                         title="Export JSON"
                         onClick={(e) => handleExportJson(deck, e)}
-                        className="hover:text-indigo-500 transition-colors flex items-center gap-1"
+                        className="hover:text-[#16161D] transition-colors flex items-center gap-1"
                       >
                         <Download className="w-3 h-3" /> JSON
                       </button>
@@ -279,13 +314,13 @@ export const DeckLibrary: React.FC<DeckLibraryProps> = ({
                           onDeleteDeck(deck.id!);
                         }
                       }}
-                      className="hover:text-rose-500 transition-colors p-1"
+                      className="hover:text-rose-600 transition-colors p-1"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
-              </GlassCard>
+              </div>
             );
           })}
         </div>

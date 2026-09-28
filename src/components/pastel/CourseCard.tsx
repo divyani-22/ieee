@@ -1,7 +1,9 @@
 import React from 'react';
 import { Star, ArrowRight, BookOpen, Monitor, BarChart2, Layers } from 'lucide-react';
 
-export type PastelCardVariant = 'mint' | 'lavender' | 'periwinkle' | 'yellow';
+import { PastelColorKey, PASTEL_PALETTE } from '../../utils/pastelColors';
+
+export type PastelCardVariant = PastelColorKey;
 
 export interface CourseCardProps {
   variant?: PastelCardVariant;
@@ -30,15 +32,19 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   const bgStyles: Record<PastelCardVariant, string> = {
     mint: 'bg-[#D6EAE1] text-[#16161D]',
     lavender: 'bg-[#D9CDEE] text-[#16161D]',
-    periwinkle: 'bg-[#CFD3F0] text-[#16161D]',
     yellow: 'bg-[#FCE6A6] text-[#16161D]',
+    periwinkle: 'bg-[#CFD3F0] text-[#16161D]',
+    peach: 'bg-[#F9D9CF] text-[#16161D]',
+    pink: 'bg-[#F5D3E3] text-[#16161D]',
   };
 
   const arrowRingStyles: Record<PastelCardVariant, string> = {
     mint: 'group-hover:border-[#A8D5C2]',
     lavender: 'group-hover:border-[#B9A6E3]',
-    periwinkle: 'group-hover:border-[#B2B9E4]',
     yellow: 'group-hover:border-[#E5CB82]',
+    periwinkle: 'group-hover:border-[#B2B9E4]',
+    peach: 'group-hover:border-[#F2B8A8]',
+    pink: 'group-hover:border-[#E8ADC5]',
   };
 
   return (

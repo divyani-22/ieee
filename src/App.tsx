@@ -282,30 +282,37 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
+    <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300 relative">
+      {/* Light grid texture background & soft corner glows (entire website) */}
+      <div className="ambient-grid-canvas" aria-hidden="true" />
+      <div className="ambient-glow-lavender" aria-hidden="true" />
+      <div className="ambient-glow-mint" aria-hidden="true" />
+
       {/* Navigation Header with Live Bookmarks & Due Badges */}
-      <Navbar
-        currentView={currentView}
-        onNavigate={(v) => {
-          setIsReviewingBookmarks(false);
-          setCurrentView(v);
-        }}
-        theme={theme}
-        onToggleTheme={toggleTheme}
-        dueCardsCount={totalDueCardsCount}
-        bookmarkedCount={bookmarkedCards.length}
-        totalCardsCount={allCards.length}
-        onOpenUpload={() => {
-          setIsReviewingBookmarks(false);
-          setCurrentView('home');
-          setTimeout(() => {
-            document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' });
-          }, 100);
-        }}
-      />
+      <header className="relative z-20">
+        <Navbar
+          currentView={currentView}
+          onNavigate={(v) => {
+            setIsReviewingBookmarks(false);
+            setCurrentView(v);
+          }}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+          dueCardsCount={totalDueCardsCount}
+          bookmarkedCount={bookmarkedCards.length}
+          totalCardsCount={allCards.length}
+          onOpenUpload={() => {
+            setIsReviewingBookmarks(false);
+            setCurrentView('home');
+            setTimeout(() => {
+              document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }}
+        />
+      </header>
 
       {/* Main View Router */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
         {currentView === 'home' && (
           <div className="space-y-12">
             {/* Signature Pastel Bento Dashboard Matching Reference Image */}

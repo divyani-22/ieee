@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { Card, Deck, QuizDifficultyLevel } from '../../types';
 import { Button } from '../../components/Button';
+import { getPastelByIndex, getPastelConfig } from '../../utils/pastelColors';
 
 export interface QuizSessionProps {
   deck: Deck;
@@ -523,79 +524,124 @@ export const QuizSession: React.FC<QuizSessionProps> = ({
   const formattedIndex = String(currentIndex + 1).padStart(2, '0');
   const formattedTotal = String(quizQuestions.length).padStart(2, '0');
 
+  // Rotate through 6 pastel colors for quiz questions
+  const pastelKey = getPastelByIndex(currentIndex);
+  const pastel = getPastelConfig(pastelKey);
+
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-fade-in pb-20 select-none">
-      {/* Top Header: Question 01 / 10, Progress Bar, Exit Quiz, Timer */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={() => setQuizStarted(false)}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-navy/60 dark:text-lightBlue-200 hover:text-navy dark:hover:text-white transition-colors"
-        >
-          <X className="w-4 h-4" />
-          Exit Quiz
-        </button>
-
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-black text-navy dark:text-white">
-            Question {formattedIndex} <span className="text-navy/40 dark:text-lightBlue-200 font-semibold">/ {formattedTotal}</span>
-          </span>
-        </div>
-
-        <div className="flex items-center gap-1.5 text-xs font-mono font-bold px-3 py-1 rounded-full bg-white dark:bg-navy-800 text-navy dark:text-white border border-lightBlue-100 dark:border-navy-700 shadow-soft">
-          <Timer className="w-3.5 h-3.5 text-coral" />
-          <span>{formatTimer(secondsElapsed)}</span>
-        </div>
-      </div>
-
-      {/* Progress Bar */}
-      <div className="w-full h-2.5 bg-lightBlue-100 dark:bg-navy-800 rounded-full overflow-hidden">
-        <div
-          className="h-full bg-coral rounded-full transition-all duration-300"
-          style={{ width: `${progressPercent}%` }}
-        />
-      </div>
-
-      {/* Large Rounded Question Card */}
-      <div className="bg-white dark:bg-navy-800 rounded-4xl p-6 sm:p-10 border border-lightBlue-100 dark:border-navy-700 shadow-soft-lg space-y-6">
+      {/* Top Header: Exit Quiz, Question counter, Timer */}
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-lightBlue-100 text-navy">
-            {selectedDifficulty.toUpperCase()} LEVEL
-          </span>
-          <span className="text-xs font-bold text-navy/40 dark:text-lightBlue-200">
-            {currentQuestion?.type === 'mcq' ? 'Select 1 of 4 choices' : 'Instant Feedback'}
+          <button
+            onClick={() => setQuizStarted(false)}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#6B6B7B] hover:text-[#16161D] transition-colors"
+          >
+            <X className="w-4 h-4" />
+            Exit Quiz
+          </button>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-black text-[#16161D]">
+              Question {formattedIndex} <span className="text-[#6B6B7B] font-semibold">/ {formattedTotal}</span>
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-xs font-mono font-bold px-3.5 py-1.5 rounded-full bg-white shadow-soft text-[#16161D]">
+            <Timer className="w-3.5 h-3.5 text-[#16161D]" />
+            <span>{formatTimer(secondsElapsed)}</span>
+          </div>
+        </div>
+
+        {/* Thin rounded progress bar in lavender #B9A6E3 */}
+        <div className="w-full h-2 bg-white/70 rounded-full overflow-hidden shadow-xs">
+          <div
+            className="h-full bg-[#B9A6E3] rounded-full transition-all duration-300"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Large Rounded Pastel Question Card */}
+      <div
+        className="card-pillowy relative p-7 sm:p-10 space-y-6 overflow-hidden shadow-pillowy"
+        style={{
+          backgroundColor: pastel.front,
+          color: '#16161D',
+        }}
+      >
+        {/* Low-opacity open-book watermark */}
+        <div className="absolute right-2 bottom-2 pointer-events-none opacity-[0.08] select-none text-[#16161D]">
+          <BookOpen className="w-40 h-40" strokeWidth={1} />
+        </div>
+
+        {/* Decorative Sparkle Stars */}
+        <svg className="absolute top-8 right-24 w-4 h-4 text-white/70 pointer-events-none" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+        </svg>
+        <svg className="absolute bottom-12 right-28 w-3 h-3 text-white/60 pointer-events-none" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+        </svg>
+
+        {/* Top bar: White circular icon chip + question-number chip + difficulty */}
+        <div className="flex items-center justify-between relative z-10">
+          <div className="flex items-center gap-2.5">
+            <div className="w-11 h-11 rounded-full bg-white shadow-soft flex items-center justify-center text-[#16161D]">
+              <BrainCircuit className="w-5 h-5 text-[#16161D]" />
+            </div>
+            <span className="px-3.5 py-1.5 rounded-full bg-white shadow-soft text-xs font-black text-[#16161D]">
+              Q {formattedIndex} of {formattedTotal}
+            </span>
+          </div>
+
+          <span className="px-3.5 py-1.5 rounded-full bg-white/75 backdrop-blur-xs text-[10px] font-black uppercase tracking-wider text-[#16161D] shadow-xs">
+            {selectedDifficulty}
           </span>
         </div>
 
-        {/* Question Text */}
-        <h2 className="text-xl sm:text-2xl font-black text-navy dark:text-white leading-relaxed whitespace-pre-line">
+        {/* Question Text: Bold, dark #16161D, 20-24px, tight leading */}
+        <h2 className="text-xl sm:text-2xl font-black text-[#16161D] leading-tight tracking-tight whitespace-pre-line relative z-10">
           {currentQuestion?.question}
         </h2>
 
-        {/* Four Answer Choices (Selected answers use yellow/coral accent colors) */}
+        {/* Answer Choices */}
         {options.length > 0 ? (
-          <div className="grid grid-cols-1 gap-3 pt-2">
+          <div className="grid grid-cols-1 gap-3 pt-1 relative z-10">
             {options.map((option, idx) => {
               const isSelected = selectedAnswer === option;
               const isCorrectAnswer =
                 option.trim().toLowerCase() === currentQuestion?.answer.trim().toLowerCase();
 
-              let choiceStyle =
-                'bg-pageBg dark:bg-navy-900 border-2 border-lightBlue-100 dark:border-navy-700 text-navy dark:text-white hover:border-lightBlue-300';
+              // Default: white pill / rounded-2xl row with circular letter badge tinted in card's color
+              let optionStyle =
+                'bg-white text-[#16161D] border border-white/80 shadow-soft hover:-translate-y-0.5 hover:bg-white/95';
+              let badgeBg = pastel.badge;
+              let badgeText = '#16161D';
 
               if (isAnswered) {
                 if (isCorrectAnswer) {
-                  choiceStyle =
-                    'bg-lightBlue-100 dark:bg-navy-700 border-2 border-navy text-navy dark:text-white font-black';
+                  // Correct: mint #A8D5C2 background with a green check
+                  optionStyle =
+                    'bg-[#A8D5C2] text-[#16161D] border-2 border-[#589A80] shadow-soft animate-scale-in font-black';
+                  badgeBg = '#589A80';
+                  badgeText = '#FFFFFF';
                 } else if (isSelected && !isCorrectAnswer) {
-                  choiceStyle =
-                    'bg-coral-100 border-2 border-coral text-coral-700 font-black';
+                  // Wrong: soft coral #F4B6B6 background with an x icon
+                  optionStyle =
+                    'bg-[#F4B6B6] text-[#16161D] border-2 border-[#D5554F] shadow-soft animate-scale-in font-black';
+                  badgeBg = '#D5554F';
+                  badgeText = '#FFFFFF';
                 } else {
-                  choiceStyle = 'opacity-40 border-lightBlue-100 text-navy/50';
+                  optionStyle = 'bg-white/60 text-[#16161D]/45 border border-transparent';
+                  badgeBg = 'rgba(0,0,0,0.06)';
+                  badgeText = '#16161D';
                 }
               } else if (isSelected) {
-                // Selected accent state (Yellow / Coral accent styling as requested)
-                choiceStyle =
-                  'bg-yellowPastel-100 dark:bg-yellowPastel-950/40 border-2 border-yellowPastel-400 text-navy dark:text-white font-black ring-2 ring-yellowPastel-300 shadow-soft';
+                // Selected: lavender #B9A6E3 border/ring with a check icon
+                optionStyle =
+                  'bg-white text-[#16161D] border-2 border-[#B9A6E3] ring-4 ring-[#B9A6E3]/35 shadow-soft font-black';
+                badgeBg = '#B9A6E3';
+                badgeText = '#FFFFFF';
               }
 
               return (
@@ -603,26 +649,37 @@ export const QuizSession: React.FC<QuizSessionProps> = ({
                   key={idx}
                   disabled={isAnswered}
                   onClick={() => handleSelectOption(option)}
-                  className={`p-4 sm:p-5 rounded-2xl text-left text-sm sm:text-base font-bold transition-all duration-150 flex items-center justify-between ${choiceStyle}`}
+                  className={`p-4 sm:p-5 rounded-2xl text-left text-sm sm:text-base font-bold transition-all duration-200 flex items-center justify-between ${optionStyle}`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-xl bg-white dark:bg-navy-800 text-navy dark:text-white border border-lightBlue-200 dark:border-navy-600 flex items-center justify-center text-xs font-black shadow-sm shrink-0">
+                    <span
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black shrink-0 transition-colors shadow-xs"
+                      style={{
+                        backgroundColor: badgeBg,
+                        color: badgeText,
+                      }}
+                    >
                       {String.fromCharCode(65 + idx)}
                     </span>
-                    <span>{option}</span>
+                    <span className="leading-snug">{option}</span>
                   </div>
+
+                  {/* Icon indicators */}
                   {isAnswered && isCorrectAnswer && (
-                    <CheckCircle2 className="w-5 h-5 text-navy dark:text-white shrink-0" />
+                    <CheckCircle2 className="w-5 h-5 text-[#3A7560] stroke-[2.5] shrink-0" />
                   )}
                   {isAnswered && isSelected && !isCorrectAnswer && (
-                    <XCircle className="w-5 h-5 text-coral shrink-0" />
+                    <XCircle className="w-5 h-5 text-[#A6482F] stroke-[2.5] shrink-0" />
+                  )}
+                  {!isAnswered && isSelected && (
+                    <CheckCircle2 className="w-5 h-5 text-[#7D64B5] stroke-[2.5] shrink-0" />
                   )}
                 </button>
               );
             })}
           </div>
         ) : (
-          <div className="space-y-3 pt-2">
+          <div className="space-y-3 pt-1 relative z-10">
             <input
               type="text"
               placeholder="Type your answer here..."
@@ -634,7 +691,7 @@ export const QuizSession: React.FC<QuizSessionProps> = ({
                   handleSubmitAnswer();
                 }
               }}
-              className="w-full p-4 rounded-2xl bg-pageBg dark:bg-navy-900 border-2 border-lightBlue-200 dark:border-navy-700 text-base font-bold text-navy dark:text-white placeholder-navy/40 focus:outline-none focus:ring-2 focus:ring-coral"
+              className="w-full p-4 rounded-2xl bg-white border-2 border-white shadow-soft text-base font-bold text-[#16161D] placeholder-[#6B6B7B] focus:outline-none focus:ring-4 focus:ring-[#B9A6E3]/40"
             />
           </div>
         )}
@@ -642,74 +699,72 @@ export const QuizSession: React.FC<QuizSessionProps> = ({
         {/* Feedback Banner */}
         {isAnswered && (
           <div
-            className={`p-4 rounded-3xl border space-y-1 animate-fade-in ${
+            className={`p-4 rounded-2xl border space-y-1 animate-scale-in relative z-10 shadow-soft ${
               selectedAnswer?.trim().toLowerCase() === currentQuestion?.answer.trim().toLowerCase() ||
               typedAnswer.trim().toLowerCase() === currentQuestion?.answer.trim().toLowerCase()
-                ? 'bg-lightBlue-100/70 border-lightBlue-300'
-                : 'bg-coral-100/70 border-coral-300'
+                ? 'bg-[#D6EAE1] border-[#A8D5C2] text-[#16161D]'
+                : 'bg-[#F9D9CF] border-[#F2B8A8] text-[#16161D]'
             }`}
           >
             <div className="flex items-center gap-2">
               {selectedAnswer?.trim().toLowerCase() === currentQuestion?.answer.trim().toLowerCase() ||
               typedAnswer.trim().toLowerCase() === currentQuestion?.answer.trim().toLowerCase() ? (
                 <>
-                  <CheckCircle2 className="w-5 h-5 text-navy" />
-                  <span className="text-sm font-black text-navy">
+                  <CheckCircle2 className="w-5 h-5 text-[#3A7560] stroke-[2.5]" />
+                  <span className="text-sm font-extrabold text-[#16161D]">
                     Correct! Great retention.
                   </span>
                 </>
               ) : (
                 <>
-                  <XCircle className="w-5 h-5 text-coral" />
-                  <span className="text-sm font-black text-coral-800">
-                    The correct answer is: {currentQuestion?.answer}
+                  <XCircle className="w-5 h-5 text-[#A6482F] stroke-[2.5]" />
+                  <span className="text-sm font-extrabold text-[#16161D]">
+                    Correct answer: {currentQuestion?.answer}
                   </span>
                 </>
               )}
             </div>
 
             {currentQuestion?.explanation && (
-              <p className="text-xs text-navy/80 leading-relaxed pt-0.5">
-                <span className="font-bold">Fact: </span>
+              <p className="text-xs text-[#16161D]/80 leading-relaxed pt-1">
+                <span className="font-extrabold">Fact: </span>
                 {currentQuestion.explanation}
               </p>
             )}
           </div>
         )}
 
-        {/* Footer Navigation Buttons: Previous Button & Next / Submit Button */}
-        <div className="pt-4 border-t border-lightBlue-100 dark:border-navy-700 flex items-center justify-between">
-          <Button
-            variant="secondary"
-            size="md"
+        {/* Footer Navigation Buttons: Circular arrow for prev + Action button for Next/Submit */}
+        <div className="pt-2 border-t border-black/5 flex items-center justify-between relative z-10">
+          <button
+            type="button"
             disabled={currentIndex === 0}
             onClick={handlePrevQuestion}
-            className="font-bold text-xs"
+            className="w-11 h-11 rounded-full bg-white ring-4 ring-white/60 shadow-soft flex items-center justify-center text-[#16161D] hover:-translate-y-0.5 hover:shadow-pillowy transition-all disabled:opacity-40 disabled:hover:translate-y-0"
+            title="Previous Question"
+            aria-label="Previous Question"
           >
-            <ChevronLeft className="w-4 h-4 mr-1" />
-            Previous
-          </Button>
+            <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+          </button>
 
           {!isAnswered ? (
-            <Button
-              variant="coral"
-              size="md"
+            <button
+              type="button"
               disabled={options.length > 0 ? !selectedAnswer : !typedAnswer.trim()}
               onClick={handleSubmitAnswer}
-              className="font-black text-xs px-6 shadow-coral-soft"
+              className="px-6 py-3 rounded-full bg-[#22222B] text-white text-xs font-black shadow-pillowy hover:bg-black transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100"
             >
               Submit Answer
-            </Button>
+            </button>
           ) : (
-            <Button
-              variant="primary"
-              size="md"
+            <button
+              type="button"
               onClick={handleNextQuestion}
-              className="font-black text-xs px-6 shadow-soft"
+              className="px-6 py-3 rounded-full bg-[#22222B] text-white text-xs font-black shadow-pillowy hover:bg-black transition-all hover:scale-105 active:scale-95 flex items-center gap-1.5"
             >
-              {currentIndex + 1 < quizQuestions.length ? 'Next Question' : 'View Results'}
-              <ChevronRight className="w-4 h-4 ml-1" />
-            </Button>
+              <span>{currentIndex + 1 < quizQuestions.length ? 'Next Question' : 'View Results'}</span>
+              <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+            </button>
           )}
         </div>
       </div>

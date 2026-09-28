@@ -13,6 +13,7 @@ import {
 import { Card, Deck } from '../../types';
 import { Button } from '../../components/Button';
 import { CardTypeBadge } from '../../components/Badge';
+import { getPastelByIndex, getPastelConfig } from '../../utils/pastelColors';
 
 export interface BookmarksPageProps {
   bookmarkedCards: Card[];
@@ -165,65 +166,84 @@ export const BookmarksPage: React.FC<BookmarksPageProps> = ({
               const parentDeck = deckMap.get(card.deckId);
               const isRevealed = revealedCardId === card.id;
 
+              const pastelKey = getPastelByIndex(idx);
+              const pastel = getPastelConfig(pastelKey);
+
               return (
                 <div
                   key={card.id || idx}
-                  className="p-6 sm:p-7 rounded-3xl bg-white dark:bg-navy-800 border border-lightBlue-100 dark:border-navy-700 hover:border-lightBlue-200 shadow-soft hover:shadow-soft-md transition-all space-y-4"
+                  className="card-pillowy relative p-6 sm:p-7 rounded-4xl shadow-pillowy space-y-4 overflow-hidden transition-all duration-300"
+                  style={{
+                    backgroundColor: pastel.front,
+                    color: '#16161D',
+                  }}
                 >
-                  <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+                  {/* Low-opacity open-book watermark */}
+                  <div className="absolute right-2 bottom-2 pointer-events-none opacity-[0.08] select-none text-[#16161D]">
+                    <BookOpen className="w-36 h-36" strokeWidth={1} />
+                  </div>
+
+                  {/* Decorative Sparkle Stars */}
+                  <svg className="absolute top-6 right-20 w-4 h-4 text-white/70 pointer-events-none" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+                  </svg>
+
+                  <div className="flex flex-col sm:flex-row items-start justify-between gap-4 relative z-10">
                     <div className="space-y-3 flex-1 min-w-0">
                       {/* Topic & Date Added */}
                       <div className="flex flex-wrap items-center gap-2">
                         {parentDeck && (
-                          <span className="text-[11px] font-black px-3 py-1 rounded-full bg-lightBlue-100 text-navy dark:bg-navy-700 dark:text-lightBlue-200 flex items-center gap-1">
-                            <Layers className="w-3 h-3 text-coral" />
+                          <span className="text-[11px] font-black px-3.5 py-1 rounded-full bg-white shadow-soft text-[#16161D] flex items-center gap-1">
+                            <Layers className="w-3 h-3 text-[#16161D]" />
                             {parentDeck.title}
                           </span>
                         )}
-                        <CardTypeBadge type={card.type} />
-                        <span className="text-[11px] font-semibold text-navy/50 dark:text-lightBlue-200 flex items-center gap-1">
+                        <span className="text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-white/80 text-[#16161D] shadow-xs">
+                          {card.type}
+                        </span>
+                        <span className="text-[11px] font-bold text-[#6B6B7B] flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
-                          Date Added: {formatDate(card.bookmarkedAt)}
+                          Added: {formatDate(card.bookmarkedAt)}
                         </span>
                       </div>
 
                       {/* Question */}
                       <div className="space-y-1">
-                        <div className="text-[11px] font-black uppercase tracking-wider text-coral">
+                        <div className="text-[11px] font-black uppercase tracking-wider text-[#6B6B7B]">
                           Question / Concept
                         </div>
-                        <p className="text-base font-extrabold text-navy dark:text-white whitespace-pre-line leading-relaxed">
+                        <p className="text-base sm:text-lg font-black text-[#16161D] whitespace-pre-line leading-snug">
                           {card.question}
                         </p>
                       </div>
 
                       {/* Answer */}
                       <div className="space-y-1 pt-1">
-                        <div className="text-[11px] font-black uppercase tracking-wider text-navy/60 dark:text-lightBlue-200 flex items-center justify-between">
+                        <div className="text-[11px] font-black uppercase tracking-wider text-[#6B6B7B] flex items-center justify-between">
                           <span>Answer</span>
                           {!isRevealed && (
                             <button
                               onClick={() => setRevealedCardId(card.id || null)}
-                              className="text-[11px] font-bold text-coral hover:underline"
+                              className="text-[11px] font-extrabold text-[#16161D] hover:underline"
                             >
                               Reveal Answer
                             </button>
                           )}
                         </div>
                         {isRevealed ? (
-                          <div className="p-3.5 rounded-2xl bg-pageBg dark:bg-navy-900 border border-lightBlue-100 dark:border-navy-700 space-y-1 animate-fade-in">
-                            <p className="text-sm font-bold text-navy dark:text-white whitespace-pre-line leading-relaxed">
+                          <div className="p-4 rounded-2xl bg-white/90 backdrop-blur-xs shadow-soft space-y-1 animate-scale-in">
+                            <p className="text-sm sm:text-base font-black text-[#16161D] whitespace-pre-line leading-relaxed">
                               {card.answer}
                             </p>
                             {card.explanation && (
-                              <p className="text-xs text-navy/60 dark:text-lightBlue-200 italic pt-1 border-t border-lightBlue-200/40">
+                              <p className="text-xs text-[#6B6B7B] font-semibold italic pt-1 border-t border-black/5">
                                 {card.explanation}
                               </p>
                             )}
                           </div>
                         ) : (
-                          <p className="text-xs font-semibold text-navy/40 italic">
-                            (Hidden for active recall test — tap "Reveal Answer" or "Review" to test yourself)
+                          <p className="text-xs font-semibold text-[#6B6B7B] italic">
+                            (Hidden for active recall test — tap "Reveal Answer" or "Review All" to study)
                           </p>
                         )}
                       </div>
