@@ -189,6 +189,22 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({
       e.preventDefault();
       handleFlip();
     },
+    'd': () => {
+      if (isFlipped) {
+        handleDontRemember();
+      } else {
+        handleFlip();
+      }
+    },
+    'r': () => {
+      if (isFlipped) {
+        handleRemembered();
+      }
+    },
+    'b': () => {
+      const fakeEvent = { stopPropagation: () => {} } as React.MouseEvent;
+      handleManualToggleBookmark(fakeEvent);
+    },
     '1': () => {
       if (isFlipped) handleRating(1);
     },

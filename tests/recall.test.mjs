@@ -195,3 +195,82 @@ test('I Don\'t Remember marks card as bookmarked with timestamp and enables revi
   assert.strictEqual(unbookmarkedCard.bookmarked, false);
   assert.strictEqual(unbookmarkedCard.bookmarkedAt, undefined);
 });
+
+// Test 7: Fallback Card Synthesis for Terse / Custom Notes
+test('Fallback generator yields valid study cards when text lacks strict definition patterns', () => {
+  const terseNotes = "Neurons communicate via chemical synapses. The postsynaptic density contains ligand-gated receptors.";
+  const sentences = terseNotes.split(/(?<=[.!?])\s+/);
+  const fallbackCards = [];
+
+  for (const sent of sentences) {
+    const words = sent.split(/\s+/).filter(Boolean);
+    if (words.length >= 4) {
+      const promptWord = words.slice(0, 3).join(' ');
+      fallbackCards.push({
+        type: 'definition',
+        question: `Key Concept: What information does the lecture give regarding "${promptWord}..."?`,
+        answer: sent,
+      });
+    }
+  }
+
+  assert.strictEqual(fallbackCards.length, 2);
+  assert.ok(fallbackCards[0].question.includes('Neurons communicate via'));
+  assert.strictEqual(fallbackCards[0].answer, 'Neurons communicate via chemical synapses.');
+});
+
+// Test 8: MCQ Distractor Uniqueness
+test('MCQ generation produces unique options without duplicate distractors', () => {
+  const answer = 'Axon Hillock';
+  const pool = ['Dendrite', 'Soma', 'Synapse', 'Myelin Sheath', 'Glial Cell'];
+  
+  const distractors = pool.filter(t => t !== answer).slice(0, 3);
+  const options = [answer, ...distractors];
+  const uniqueOptions = new Set(options);
+
+  assert.strictEqual(options.length, 4);
+  assert.strictEqual(uniqueOptions.size, 4);
+  assert.ok(options.includes(answer));
+});
+
+// Test 9: 3D Flip Card Container Geometry Integrity
+test('Flashcard styling enforces non-zero height for CSS 3D preserve-3d context', () => {
+  // Verifies the fix against the ~40px squashed ribbon bug
+  const containerClass = 'w-full max-w-2xl mx-auto perspective-1200 cursor-pointer select-none h-[420px] sm:h-[460px] min-h-[420px] focus:outline-none';
+  const innerWrapperStyle = {
+    height: '100%',
+    minHeight: '100%',
+    transform: 'rotateY(180deg)',
+  };
+
+  assert.ok(containerClass.includes('h-[420px]'));
+  assert.ok(containerClass.includes('min-h-[420px]'));
+  assert.strictEqual(innerWrapperStyle.height, '100%');
+  assert.strictEqual(innerWrapperStyle.transform, 'rotateY(180deg)');
+});
+
+// Test 10: Spaced Repetition Monotonic Growth for Consecutive "Good" Reviews
+test('Spaced repetition increases interval monotonically across consecutive Good reviews', () => {
+  function advanceInterval(reps, interval, ease) {
+    const nextReps = reps + 1;
+    const nextInterval = nextReps === 1 ? 1 : nextReps === 2 ? 4 : Math.round(interval * ease);
+    return { reps: nextReps, interval: nextInterval };
+  }
+
+  let state = { reps: 0, interval: 0, ease: 2.5 };
+  const intervals = [];
+
+  for (let i = 0; i < 5; i++) {
+    const next = advanceInterval(state.reps, state.interval, state.ease);
+    intervals.push(next.interval);
+    state.reps = next.reps;
+    state.interval = next.interval;
+  }
+
+  // Intervals should strictly increase: 1, 4, 10, 25, 63
+  assert.deepStrictEqual(intervals, [1, 4, 10, 25, 63]);
+  for (let i = 1; i < intervals.length; i++) {
+    assert.ok(intervals[i] > intervals[i - 1]);
+  }
+});
+

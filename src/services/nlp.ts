@@ -323,6 +323,32 @@ export function generateCardsFromText(
     }
   }
 
+  // Fallback: If no cards were generated from strict rules, create concept flashcards from available sentences
+  if (generatedCards.length === 0 && allSentences.length > 0) {
+    for (let i = 0; i < Math.min(allSentences.length, 10); i++) {
+      const sent = allSentences[i];
+      const words = sent.split(/\s+/).filter(Boolean);
+      if (words.length >= 4) {
+        const promptWord = words.slice(0, 3).join(' ');
+        const question = `Key Concept: What information does the lecture give regarding "${promptWord}..."?`;
+        const answer = sent;
+        generatedCards.push({
+          type: 'definition',
+          question,
+          answer,
+          explanation: `Source sentence from lecture material: "${sent}"`,
+          sourceSentence: sent,
+          difficulty: assessDifficulty(sent, promptWord),
+          repetitions: 0,
+          interval: 0,
+          easeFactor: 2.5,
+          dueDate: defaultDueDate,
+          starred: false,
+        });
+      }
+    }
+  }
+
   // Filter by difficulty if requested
   let filtered = generatedCards;
   if (config.difficulty !== 'all') {

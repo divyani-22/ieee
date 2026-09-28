@@ -15,6 +15,8 @@ import { QuizSession } from './features/quiz/QuizSession';
 import { AnalyticsView } from './features/insights/AnalyticsView';
 import { BookmarksPage } from './features/bookmarks/BookmarksPage';
 import { StarFeaturesSection } from './features/star/StarFeaturesSection';
+import { EmptyState } from './components/EmptyState';
+import { Target, Layers } from 'lucide-react';
 
 export const App: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
@@ -350,20 +352,30 @@ export const App: React.FC = () => {
           />
         )}
 
-        {currentView === 'deck-detail' && activeDeck && (
-          <DeckDetail
-            deck={activeDeck}
-            cards={activeCards}
-            onBack={() => setCurrentView('decks')}
-            onStudy={() => {
-              setIsReviewingBookmarks(false);
-              setCurrentView('study');
-            }}
-            onQuiz={() => setCurrentView('quiz')}
-            onUpdateCard={handleUpdateCard}
-            onDeleteCard={handleDeleteCard}
-            onAddCard={handleAddCard}
-          />
+        {currentView === 'deck-detail' && (
+          activeDeck ? (
+            <DeckDetail
+              deck={activeDeck}
+              cards={activeCards}
+              onBack={() => setCurrentView('decks')}
+              onStudy={() => {
+                setIsReviewingBookmarks(false);
+                setCurrentView('study');
+              }}
+              onQuiz={() => setCurrentView('quiz')}
+              onUpdateCard={handleUpdateCard}
+              onDeleteCard={handleDeleteCard}
+              onAddCard={handleAddCard}
+            />
+          ) : (
+            <EmptyState
+              icon={<Layers className="w-8 h-8 text-indigo-500" />}
+              title="Deck Not Found"
+              description="The selected deck is not available or was deleted."
+              actionText="Go to Library"
+              onAction={() => setCurrentView('decks')}
+            />
+          )
         )}
 
         {currentView === 'study' && (
@@ -385,14 +397,24 @@ export const App: React.FC = () => {
           />
         )}
 
-        {currentView === 'quiz' && activeDeck && (
-          <QuizSession
-            deck={activeDeck}
-            cards={activeCards}
-            initialDifficulty={quizDifficultyLevel}
-            onFinishQuiz={handleFinishQuizSession}
-            onBack={() => setCurrentView(activeDeckId ? 'deck-detail' : 'home')}
-          />
+        {currentView === 'quiz' && (
+          activeDeck ? (
+            <QuizSession
+              deck={activeDeck}
+              cards={activeCards}
+              initialDifficulty={quizDifficultyLevel}
+              onFinishQuiz={handleFinishQuizSession}
+              onBack={() => setCurrentView(activeDeckId ? 'deck-detail' : 'home')}
+            />
+          ) : (
+            <EmptyState
+              icon={<Target className="w-8 h-8 text-amber-500" />}
+              title="No Decks Available for Quiz"
+              description="Create or upload a study deck first to test your retention across Simple, Intermediate, and Hard difficulty levels."
+              actionText="Create Deck"
+              onAction={() => setCurrentView('home')}
+            />
+          )
         )}
 
         {currentView === 'insights' && (
