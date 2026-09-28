@@ -2,7 +2,15 @@
 
 > **Turn any lecture material into interactive flashcards and quizzes — 100% in-browser, offline-first, zero backend, NO API KEYS.**
 
-Recall is a high-performance, privacy-first study companion designed with the aesthetic polish of Linear and Arc. It takes digital PDFs, scanned documents, camera photos of lecture slides/notes, or raw text, and generates four types of high-retention study cards using an autonomous, on-device NLP synthesis pipeline.
+[![Live Demo](https://img.shields.io/badge/Production-recall--xi--three.vercel.app-blue?style=for-the-badge&logo=vercel)](https://recall-xi-three.vercel.app)
+[![GitHub](https://img.shields.io/badge/GitHub-divyani--22%2Fieee-black?style=for-the-badge&logo=github)](https://github.com/divyani-22/ieee)
+
+- **Live Production URL**: [https://recall-xi-three.vercel.app](https://recall-xi-three.vercel.app)
+- **GitHub Repository**: [https://github.com/divyani-22/ieee](https://github.com/divyani-22/ieee)
+- **Branch**: `main` (and `phase2-polish`)
+
+Recall is a high-performance, privacy-first study companion designed with the aesthetic polish of Linear, Arc, and tactile paper stationery. It takes digital PDFs, scanned documents, camera photos of lecture slides/notes, or raw text, and generates four types of high-retention study cards using an autonomous, on-device NLP synthesis pipeline.
+
 
 ---
 
