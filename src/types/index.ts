@@ -13,6 +13,8 @@ export interface Card {
   sourceSentence?: string; // Exact sentence in the original document
   difficulty: CardDifficulty;
   starred?: boolean;
+  bookmarked?: boolean;
+  bookmarkedAt?: string; // ISO date string when added to bookmarks
   
   // Spaced Repetition (SM-2 / FSRS) fields:
   repetitions: number; // consecutive correct reviews
@@ -75,4 +77,6 @@ export interface GenerationConfig {
   useSmartMode: boolean; // Optional WebLLM
 }
 
-export type ViewMode = 'home' | 'decks' | 'deck-detail' | 'study' | 'quiz' | 'insights';
+export type QuizDifficultyLevel = 'simple' | 'intermediate' | 'hard';
+
+export type ViewMode = 'home' | 'decks' | 'deck-detail' | 'study' | 'quiz' | 'insights' | 'bookmarks';

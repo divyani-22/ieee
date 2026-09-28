@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, createDeckWithCards, deleteDeck } from './db';
-import { Card, Deck, GenerationConfig, StudySessionLog, ViewMode } from './types';
+import { Card, Deck, GenerationConfig, QuizDifficultyLevel, StudySessionLog, ViewMode } from './types';
 import { generateCardsSmartOrFallback } from './services/webllm';
 import { generateCardsFromText } from './services/nlp';
 import { SAMPLE_NEUROSCIENCE_TEXT } from './samples/sampleDecks';
@@ -13,6 +13,8 @@ import { DeckDetail } from './features/library/DeckDetail';
 import { FlashcardViewer } from './features/study/FlashcardViewer';
 import { QuizSession } from './features/quiz/QuizSession';
 import { AnalyticsView } from './features/insights/AnalyticsView';
+import { BookmarksPage } from './features/bookmarks/BookmarksPage';
+import { StarFeaturesSection } from './features/star/StarFeaturesSection';
 
 export const App: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
@@ -21,10 +23,19 @@ export const App: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Star features state
+  const [quizDifficultyLevel, setQuizDifficultyLevel] = useState<QuizDifficultyLevel>('intermediate');
+  const [isReviewingBookmarks, setIsReviewingBookmarks] = useState(false);
+
   // Live queries from IndexedDB (Dexie)
   const decks = useLiveQuery(() => db.decks.toArray(), []) || [];
   const allCards = useLiveQuery(() => db.cards.toArray(), []) || [];
   const studyLogs = useLiveQuery(() => db.studyLogs.toArray(), []) || [];
+
+  // Bookmarked cards across all decks
+  const bookmarkedCards = React.useMemo(() => {
+    return allCards.filter(c => !!c.bookmarked);
+  }, [allCards]);
 
   // Map cards by deckId
   const cardsByDeckId = React.useMemo(() => {
@@ -41,8 +52,8 @@ export const App: React.FC = () => {
   const totalDueCardsCount = allCards.filter(c => c.dueDate <= todayStr).length;
 
   // Active deck & active cards
-  const activeDeck = decks.find(d => d.id === activeDeckId) || null;
-  const activeCards = activeDeckId ? cardsByDeckId[activeDeckId] || [] : [];
+  const activeDeck = (activeDeckId ? decks.find(d => d.id === activeDeckId) : decks[0]) || null;
+  const activeCards = activeDeck ? cardsByDeckId[activeDeck.id!] || [] : [];
 
   // Seed sample deck on first launch if empty
   useEffect(() => {
@@ -56,7 +67,19 @@ export const App: React.FC = () => {
           useSmartMode: false,
         });
 
-        await createDeckWithCards(
+        // Pre-mark two cards as bookmarked so the user sees My Bookmarks populated right away
+        const seededCards = sampleCards.map((c, idx) => {
+          if (idx === 1 || idx === 3) {
+            return {
+              ...c,
+              bookmarked: true,
+              bookmarkedAt: new Date().toISOString(),
+            };
+          }
+          return c;
+        });
+
+        const newId = await createDeckWithCards(
           {
             title: 'Cellular Neuroscience & Action Potentials',
             description: 'Core concepts in resting membrane potential, ion channels, action potentials, and synaptic transmission.',
@@ -64,8 +87,9 @@ export const App: React.FC = () => {
             tags: ['neuroscience', 'biology', 'action-potential'],
             color: 'from-indigo-500 to-purple-600',
           },
-          sampleCards
+          seededCards
         );
+        setActiveDeckId(newId);
       }
     }
     seedInitialDeck();
@@ -121,6 +145,24 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleToggleBookmark = async (card: Card, bookmarked: boolean) => {
+    if (card.id) {
+      await db.cards.update(card.id, {
+        bookmarked,
+        bookmarkedAt: bookmarked ? new Date().toISOString() : undefined,
+      });
+      showToast(bookmarked ? '🔖 Added to My Bookmarks' : 'Removed from Bookmarks');
+    }
+  };
+
+  const handleRemoveBookmark = async (cardId: number) => {
+    await db.cards.update(cardId, {
+      bookmarked: false,
+      bookmarkedAt: undefined,
+    });
+    showToast('Bookmark removed from concept');
+  };
+
   const handleDeleteCard = async (cardId: number) => {
     await db.cards.delete(cardId);
     if (activeDeckId) {
@@ -168,9 +210,9 @@ export const App: React.FC = () => {
     goodCount: number;
     easyCount: number;
   }) => {
-    if (!activeDeckId) return;
+    if (!activeDeckId && !isReviewingBookmarks) return;
     await db.studyLogs.add({
-      deckId: activeDeckId,
+      deckId: activeDeckId || (decks[0]?.id || 1),
       mode: 'flashcards',
       date: new Date().toISOString(),
       totalReviewed: stats.totalReviewed,
@@ -201,26 +243,87 @@ export const App: React.FC = () => {
     });
   };
 
+  // Launch Star Feature Actions
+  const handleLaunchQuizWithLevel = (difficulty: QuizDifficultyLevel) => {
+    if (decks.length > 0 && !activeDeckId) {
+      setActiveDeckId(decks[0].id!);
+    }
+    setQuizDifficultyLevel(difficulty);
+    setCurrentView('quiz');
+  };
+
+  const handleLaunchFlashcards = () => {
+    if (decks.length > 0 && !activeDeckId) {
+      setActiveDeckId(decks[0].id!);
+    }
+    setIsReviewingBookmarks(false);
+    setCurrentView('study');
+  };
+
+  const handleReviewAllBookmarks = () => {
+    setIsReviewingBookmarks(true);
+    setCurrentView('study');
+  };
+
+  // Virtual deck for Bookmarks Review
+  const bookmarksVirtualDeck: Deck = {
+    id: 999999,
+    title: 'My Bookmarked Concepts',
+    description: 'Targeted revision for concepts previously marked as not remembered.',
+    sourceType: 'manual',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    totalCards: bookmarkedCards.length,
+    tags: ['bookmarks', 'revision'],
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
-      {/* Navigation Header */}
+      {/* Navigation Header with Live Bookmarks & Due Badges */}
       <Navbar
         currentView={currentView}
         onNavigate={(v) => {
+          setIsReviewingBookmarks(false);
           setCurrentView(v);
         }}
         theme={theme}
         onToggleTheme={toggleTheme}
         dueCardsCount={totalDueCardsCount}
-        onOpenUpload={() => setCurrentView('home')}
+        bookmarkedCount={bookmarkedCards.length}
+        onOpenUpload={() => {
+          setIsReviewingBookmarks(false);
+          setCurrentView('home');
+        }}
       />
 
       {/* Main View Router */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {currentView === 'home' && (
-          <UploadZone
-            onGenerate={handleGenerate}
-            isGenerating={isGenerating}
+          <div className="space-y-8">
+            {/* Star Features Section */}
+            <StarFeaturesSection
+              bookmarkedCount={bookmarkedCards.length}
+              onStartQuiz={handleLaunchQuizWithLevel}
+              onStudyFlashcards={handleLaunchFlashcards}
+              onOpenBookmarks={() => setCurrentView('bookmarks')}
+              onReviewAllBookmarks={handleReviewAllBookmarks}
+            />
+
+            {/* Ingestion & Upload Zone */}
+            <UploadZone
+              onGenerate={handleGenerate}
+              isGenerating={isGenerating}
+            />
+          </div>
+        )}
+
+        {currentView === 'bookmarks' && (
+          <BookmarksPage
+            bookmarkedCards={bookmarkedCards}
+            decks={decks}
+            onRemoveBookmark={handleRemoveBookmark}
+            onReviewAll={handleReviewAllBookmarks}
+            onNavigateToDecks={() => setCurrentView('decks')}
           />
         )}
 
@@ -234,6 +337,7 @@ export const App: React.FC = () => {
             }}
             onStudyDeck={(deckId) => {
               setActiveDeckId(deckId);
+              setIsReviewingBookmarks(false);
               setCurrentView('study');
             }}
             onQuizDeck={(deckId) => {
@@ -251,7 +355,10 @@ export const App: React.FC = () => {
             deck={activeDeck}
             cards={activeCards}
             onBack={() => setCurrentView('decks')}
-            onStudy={() => setCurrentView('study')}
+            onStudy={() => {
+              setIsReviewingBookmarks(false);
+              setCurrentView('study');
+            }}
             onQuiz={() => setCurrentView('quiz')}
             onUpdateCard={handleUpdateCard}
             onDeleteCard={handleDeleteCard}
@@ -259,13 +366,22 @@ export const App: React.FC = () => {
           />
         )}
 
-        {currentView === 'study' && activeDeck && (
+        {currentView === 'study' && (
           <FlashcardViewer
-            deck={activeDeck}
-            cards={activeCards}
+            deck={isReviewingBookmarks ? bookmarksVirtualDeck : (activeDeck || bookmarksVirtualDeck)}
+            cards={isReviewingBookmarks ? bookmarkedCards : activeCards}
             onFinishSession={handleFinishFlashcardSession}
             onUpdateCardSchedule={handleUpdateCard}
-            onBack={() => setCurrentView('deck-detail')}
+            onToggleBookmark={handleToggleBookmark}
+            showToast={showToast}
+            onBack={() => {
+              if (isReviewingBookmarks) {
+                setIsReviewingBookmarks(false);
+                setCurrentView('bookmarks');
+              } else {
+                setCurrentView('deck-detail');
+              }
+            }}
           />
         )}
 
@@ -273,8 +389,9 @@ export const App: React.FC = () => {
           <QuizSession
             deck={activeDeck}
             cards={activeCards}
+            initialDifficulty={quizDifficultyLevel}
             onFinishQuiz={handleFinishQuizSession}
-            onBack={() => setCurrentView('deck-detail')}
+            onBack={() => setCurrentView(activeDeckId ? 'deck-detail' : 'home')}
           />
         )}
 
@@ -291,10 +408,10 @@ export const App: React.FC = () => {
         )}
       </main>
 
-      {/* Toast Notification */}
+      {/* Floating Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 animate-fade-in">
-          <div className="glass-panel-elevated px-4 py-3 rounded-2xl shadow-xl border border-indigo-500/30 text-xs font-semibold text-zinc-900 dark:text-white flex items-center gap-2">
+        <div className="fixed bottom-6 right-6 z-50 animate-fade-in pointer-events-none">
+          <div className="glass-panel-elevated px-4 py-3 rounded-2xl shadow-2xl border border-indigo-500/40 text-xs font-bold text-zinc-900 dark:text-white flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping" />
             {toastMessage}
           </div>

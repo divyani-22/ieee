@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Layers, BookOpen, BarChart3, Sun, Moon, Plus } from 'lucide-react';
+import { Sparkles, Layers, BookOpen, BarChart3, Sun, Moon, Plus, Bookmark, Star } from 'lucide-react';
 import { ViewMode } from '../types';
 import { Button } from './Button';
 
@@ -9,6 +9,7 @@ export interface NavbarProps {
   theme: 'dark' | 'light';
   onToggleTheme: () => void;
   dueCardsCount: number;
+  bookmarkedCount?: number;
   onOpenUpload: () => void;
 }
 
@@ -18,6 +19,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   theme,
   onToggleTheme,
   dueCardsCount,
+  bookmarkedCount = 0,
   onOpenUpload,
 }) => {
   return (
@@ -75,6 +77,23 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           <button
+            onClick={() => onNavigate('bookmarks')}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+              currentView === 'bookmarks'
+                ? 'bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-400/40 shadow-sm'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-amber-600 dark:hover:text-amber-300'
+            }`}
+          >
+            <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+            My Bookmarks
+            {bookmarkedCount > 0 && (
+              <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-amber-500 text-white font-extrabold shadow-sm">
+                {bookmarkedCount}
+              </span>
+            )}
+          </button>
+
+          <button
             onClick={() => onNavigate('insights')}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
               currentView === 'insights'
@@ -86,6 +105,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             Insights & Stats
           </button>
         </nav>
+
 
         {/* Right Action Icons */}
         <div className="flex items-center gap-2">
@@ -131,6 +151,18 @@ export const Navbar: React.FC<NavbarProps> = ({
           Decks
           {dueCardsCount > 0 && (
             <span className="absolute top-0 right-2 w-2 h-2 rounded-full bg-indigo-600 ring-2 ring-white dark:ring-zinc-900" />
+          )}
+        </button>
+        <button
+          onClick={() => onNavigate('bookmarks')}
+          className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg text-[11px] font-medium relative ${
+            currentView === 'bookmarks' ? 'text-amber-500 font-bold' : 'text-zinc-500'
+          }`}
+        >
+          <Bookmark className="w-4 h-4" />
+          Bookmarks
+          {bookmarkedCount > 0 && (
+            <span className="absolute top-0 right-1 w-2 h-2 rounded-full bg-amber-500 ring-2 ring-white dark:ring-zinc-900" />
           )}
         </button>
         <button

@@ -13,6 +13,11 @@ export class RecallDatabase extends Dexie {
       cards: '++id, deckId, type, difficulty, dueDate, repetitions, starred',
       studyLogs: '++id, deckId, date, mode',
     });
+    this.version(2).stores({
+      decks: '++id, title, createdAt, updatedAt',
+      cards: '++id, deckId, type, difficulty, dueDate, repetitions, starred, bookmarked',
+      studyLogs: '++id, deckId, date, mode',
+    });
   }
 }
 
@@ -64,3 +69,17 @@ export async function getAllDueCards(): Promise<Card[]> {
     .filter(c => c.dueDate <= today)
     .toArray();
 }
+
+export async function getBookmarkedCards(): Promise<Card[]> {
+  return await db.cards
+    .filter(c => !!c.bookmarked)
+    .toArray();
+}
+
+export async function toggleCardBookmark(cardId: number, isBookmarked: boolean): Promise<void> {
+  await db.cards.update(cardId, {
+    bookmarked: isBookmarked,
+    bookmarkedAt: isBookmarked ? new Date().toISOString() : undefined,
+  });
+}
+
