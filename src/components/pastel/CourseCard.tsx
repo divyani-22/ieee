@@ -101,39 +101,14 @@ export const CourseCard: React.FC<CourseCardProps> = ({
       </div>
 
       {/* =================================================================== */}
-      {/* BOTTOM ROW: Avatar stack + Circular Arrow Button */}
+      {/* BOTTOM ROW: Clean Metadata Pill + Circular Arrow Button */}
       {/* =================================================================== */}
       <div className="flex items-center justify-between pt-2 relative z-10">
-        {/* Overlapping Avatar Stack with "+5" bubble */}
-        <div className="flex items-center -space-x-2">
-          {/* Avatar 1 */}
-          <div className="w-7 h-7 rounded-full ring-2 ring-white overflow-hidden bg-sky-100">
-            <img
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80"
-              alt="Student"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          {/* Avatar 2 */}
-          <div className="w-7 h-7 rounded-full ring-2 ring-white overflow-hidden bg-emerald-100">
-            <img
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80"
-              alt="Student"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          {/* Avatar 3 */}
-          <div className="w-7 h-7 rounded-full ring-2 ring-white overflow-hidden bg-amber-100">
-            <img
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80"
-              alt="Student"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          {/* "+5" Count Bubble */}
-          <div className="h-7 px-2 rounded-full bg-white ring-2 ring-white text-[10px] font-extrabold text-[#16161D] flex items-center justify-center shadow-xs">
-            {studentCountText}
-          </div>
+        {/* Clean status / card count pill */}
+        <div className="flex items-center gap-2">
+          <span className="px-3.5 py-1.5 rounded-full bg-white shadow-soft text-xs font-black text-[#16161D]">
+            {totalCards !== undefined ? `${totalCards} Cards` : 'Ready to Study'}
+          </span>
         </div>
 
         {/* Circular Arrow Button with white ring */}

@@ -20,21 +20,21 @@ export const ProgressGaugeCard: React.FC<ProgressGaugeCardProps> = ({
   onMenuClick,
   className = '',
 }) => {
-  // Semicircle gauge calculation
-  // Radius = 68, circumference = Math.PI * 68 = ~213.6
-  const radius = 68;
-  const circumference = Math.PI * radius;
-  const strokeDashoffset = circumference - (percent / 100) * circumference;
+  // Complete 360-degree circular progress calculation
+  const radius = 58;
+  const circumference = 2 * Math.PI * radius; // ~364.42
+  const clampedPercent = Math.max(0, Math.min(100, percent));
+  const strokeDashoffset = circumference - (clampedPercent / 100) * circumference;
 
   return (
-    <div className={`card-pillowy bg-[#D9CDEE] p-6 sm:p-7 flex flex-col justify-between relative overflow-hidden text-[#16161D] ${className}`}>
+    <div className={`card-pillowy bg-[#D9CDEE] p-6 sm:p-7 flex flex-col justify-between relative overflow-hidden text-[#16161D] shadow-pillowy ${className}`}>
       {/* Top Header: Icon chip + "Progress" + "..." circular menu button */}
-      <div className="flex items-center justify-between relative z-10">
+      <div className="flex items-center justify-between relative z-10 w-full mb-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-white shadow-xs flex items-center justify-center text-[#16161D]">
-            <Target className="w-4 h-4" />
+          <div className="w-9 h-9 rounded-full bg-white shadow-soft flex items-center justify-center text-[#16161D]">
+            <Target className="w-4 h-4 text-[#7D64B5]" />
           </div>
-          <span className="text-sm font-bold text-[#16161D]">
+          <span className="text-base font-bold text-[#16161D]">
             {title}
           </span>
         </div>
@@ -42,37 +42,35 @@ export const ProgressGaugeCard: React.FC<ProgressGaugeCardProps> = ({
         <button
           onClick={onMenuClick}
           aria-label="Options"
-          className="w-8 h-8 rounded-full bg-white/70 hover:bg-white shadow-xs flex items-center justify-center text-[#16161D] transition-transform active:scale-95"
+          className="w-9 h-9 rounded-full bg-white/70 hover:bg-white shadow-soft flex items-center justify-center text-[#16161D] transition-transform active:scale-95"
         >
           <MoreHorizontal className="w-4 h-4" />
         </button>
       </div>
 
-      {/* Semicircular Gauge Area */}
-      <div className="relative flex flex-col items-center justify-center pt-4 pb-2">
-        <div className="relative w-48 h-28 flex items-center justify-center overflow-hidden">
-          <svg className="w-48 h-48 -rotate-180 transform" viewBox="0 0 160 160">
-            {/* White Dashed Background Arc */}
+      {/* Complete 360-degree Circular Progress Area (Centered, No Cut-offs) */}
+      <div className="relative flex items-center justify-center w-full py-3 my-auto">
+        <div className="relative w-44 h-44 sm:w-48 sm:h-48 flex items-center justify-center">
+          <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 160 160">
+            {/* Complete White Background Circle */}
             <circle
               cx="80"
               cy="80"
               r={radius}
               fill="none"
               stroke="#FFFFFF"
-              strokeWidth="14"
-              strokeLinecap="round"
-              strokeDasharray="4 6"
-              className="opacity-95"
+              strokeWidth="13"
+              className="opacity-90"
             />
 
-            {/* Filled Yellow Arc */}
+            {/* Filled Animated Progress Circle */}
             <circle
               cx="80"
               cy="80"
               r={radius}
               fill="none"
               stroke="#FCE6A6"
-              strokeWidth="14"
+              strokeWidth="13"
               strokeLinecap="round"
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
@@ -81,11 +79,11 @@ export const ProgressGaugeCard: React.FC<ProgressGaugeCardProps> = ({
           </svg>
 
           {/* Centered Big Score & Label */}
-          <div className="absolute bottom-2 inset-x-0 flex flex-col items-center justify-center text-center">
-            <span className="text-3xl sm:text-4xl font-extrabold text-[#16161D] tracking-tight leading-none">
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none pointer-events-none">
+            <span className="text-4xl sm:text-5xl font-black text-[#16161D] tracking-tight leading-none">
               {score}
             </span>
-            <span className="text-xs font-semibold text-[#6B6B7B] mt-1 uppercase tracking-wider">
+            <span className="text-xs font-extrabold text-[#6B6B7B] mt-1.5 uppercase tracking-wider">
               {label}
             </span>
           </div>

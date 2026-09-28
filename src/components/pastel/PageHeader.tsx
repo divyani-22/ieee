@@ -28,9 +28,9 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
     <div className="space-y-4 pt-2 pb-4">
       {/* Top Greeting Row */}
       <div className="flex items-center justify-between">
-        {/* Left: Avatar + "Hello Alex" + Lavender Progress Bar */}
+        {/* Left: Greeting + Balanced Lavender Progress Bar */}
         <div className="flex items-center gap-3">
-          {showBack ? (
+          {showBack && (
             <button
               onClick={onBack}
               aria-label="Back"
@@ -38,34 +38,24 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-          ) : (
-            <div className="w-11 h-11 rounded-full bg-lavender ring-2 ring-white shadow-soft overflow-hidden shrink-0 flex items-center justify-center">
-              {/* Illustrated Avatar */}
-              <svg viewBox="0 0 40 40" fill="none" className="w-full h-full">
-                <circle cx="20" cy="20" r="20" fill="#D9CDEE" />
-                <path d="M10 40C10 32 14 27 20 27C26 27 30 32 30 40H10Z" fill="#7D64B5" />
-                <circle cx="20" cy="18" r="8" fill="#FCD9BA" />
-                <path d="M14 16C14 11 17 9 22 9C27 9 27 12 26 15C24 15 22 14 19 15C16 16 15 15 14 16Z" fill="#5A3A28" />
-                <rect x="15" y="16" width="4.5" height="3.5" rx="1" stroke="#16161D" strokeWidth="0.8" />
-                <rect x="21" y="16" width="4.5" height="3.5" rx="1" stroke="#16161D" strokeWidth="0.8" />
-                <path d="M19.5 17.5H21" stroke="#16161D" strokeWidth="0.8" />
-              </svg>
-            </div>
           )}
 
           <div className="space-y-1">
-            <span className="text-xs sm:text-sm font-semibold text-[#16161D]">
+            <span className="text-sm sm:text-base font-bold text-[#16161D]">
               Hello {userName}
             </span>
-            {/* Book icon + thin lavender progress bar */}
-            <div className="flex items-center gap-1.5">
-              <BookOpen className="w-3.5 h-3.5 text-[#B9A6E3] shrink-0" />
-              <div className="w-24 sm:w-32 h-1.5 bg-white/80 rounded-full overflow-hidden shadow-xs border border-white">
+            {/* Book icon + thin lavender progress bar filling available width */}
+            <div className="flex items-center gap-2">
+              <BookOpen className="w-3.5 h-3.5 text-[#7D64B5] shrink-0" />
+              <div className="w-44 sm:w-64 h-2 bg-white/80 rounded-full overflow-hidden shadow-xs border border-white">
                 <div
                   className="h-full bg-[#B9A6E3] rounded-full transition-all duration-700 ease-out"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
+              <span className="text-[11px] font-black text-[#6B6B7B]">
+                {progressPercent}%
+              </span>
             </div>
           </div>
         </div>

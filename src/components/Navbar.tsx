@@ -144,7 +144,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </nav>
 
-          {/* Right Action Icons: Keyboard Shortcuts & Profile Avatar */}
+          {/* Right Action Icons: Keyboard Shortcuts */}
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => setIsShortcutsOpen(true)}
@@ -153,16 +153,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="w-10 h-10 rounded-full bg-white text-[#16161D] shadow-soft flex items-center justify-center hover:bg-slate-50 transition-all hover:scale-105 active:scale-95"
             >
               <Keyboard className="w-4 h-4" />
-            </button>
-
-            {/* Profile Avatar Button */}
-            <button
-              onClick={() => setIsProfileOpen(true)}
-              aria-label="User Profile"
-              className="w-10 h-10 rounded-full bg-lavender ring-2 ring-white shadow-soft flex items-center justify-center text-[#16161D] hover:scale-105 transition-all overflow-hidden"
-              title="Student Profile"
-            >
-              <span className="font-extrabold text-xs text-[#7D64B5]">AC</span>
             </button>
           </div>
         </div>
