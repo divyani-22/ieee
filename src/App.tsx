@@ -16,11 +16,13 @@ import { FlashcardViewer } from './features/study/FlashcardViewer';
 import { QuizSession } from './features/quiz/QuizSession';
 import { BookmarksPage } from './features/bookmarks/BookmarksPage';
 import { ProgressPage } from './features/progress/ProgressPage';
+import { PhoneMockupShowcase } from './features/showcase/PhoneMockupShowcase';
 import { EmptyState } from './components/EmptyState';
 import { Target, Layers } from 'lucide-react';
 
 export const App: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
+  const [appMode, setAppMode] = useState<'mockup' | 'platform'>('mockup');
   const [currentView, setCurrentView] = useState<ViewMode>('home');
   const [activeDeckId, setActiveDeckId] = useState<number | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -282,6 +284,32 @@ export const App: React.FC = () => {
     tags: ['bookmarks', 'revision'],
   };
 
+  // Mode 1: Pixel-Accurate 3-Phone Frontend Mockup (Matches reference image 100%)
+  if (appMode === 'mockup') {
+    return (
+      <div className="relative min-h-screen bg-[#F1F5FF]">
+        <PhoneMockupShowcase />
+
+        {/* Discreet Floating Mode Switcher */}
+        <div className="fixed bottom-4 right-4 z-50 flex items-center gap-1.5 p-1 rounded-full bg-white/90 backdrop-blur-md shadow-soft-lg border border-lightBlue-200 text-xs font-bold font-poppins">
+          <button
+            onClick={() => setAppMode('mockup')}
+            className="px-3 py-1.5 rounded-full bg-[#2B3350] text-white shadow-xs transition-all"
+          >
+            📱 Reference Mockup
+          </button>
+          <button
+            onClick={() => setAppMode('platform')}
+            className="px-3 py-1.5 rounded-full text-[#2B3350] hover:bg-lightBlue-50 transition-all"
+          >
+            🎓 Study Platform
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Mode 2: Full Study & Quiz Platform
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
       {/* Navigation Header with Live Bookmarks & Due Badges */}
@@ -461,9 +489,25 @@ export const App: React.FC = () => {
         )}
       </main>
 
+      {/* Discreet Floating Mode Switcher */}
+      <div className="fixed bottom-4 right-4 z-50 flex items-center gap-1.5 p-1 rounded-full bg-white/90 backdrop-blur-md shadow-soft-lg border border-lightBlue-200 text-xs font-bold font-poppins">
+        <button
+          onClick={() => setAppMode('mockup')}
+          className="px-3 py-1.5 rounded-full text-[#2B3350] hover:bg-lightBlue-50 transition-all"
+        >
+          📱 Reference Mockup
+        </button>
+        <button
+          onClick={() => setAppMode('platform')}
+          className="px-3 py-1.5 rounded-full bg-[#2B3350] text-white shadow-xs transition-all"
+        >
+          🎓 Study Platform
+        </button>
+      </div>
+
       {/* Floating Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 animate-fade-in pointer-events-none">
+        <div className="fixed bottom-16 right-6 z-50 animate-fade-in pointer-events-none">
           <div className="bg-navy-900 text-white px-5 py-3 rounded-2xl shadow-soft-lg border border-navy-700 text-xs font-bold flex items-center gap-2.5">
             <span className="w-2.5 h-2.5 rounded-full bg-coral-400 animate-ping" />
             {toastMessage}
